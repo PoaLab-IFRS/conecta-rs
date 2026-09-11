@@ -14,3 +14,101 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+enum TipoMaterial {
+  CAPITAL
+  CONSUMIVEL
+}
+
+enum TipoValor {
+  TEXTO
+  INTEIRO
+  DECIMAL
+  BOOLEANO
+}
+
+model Material {
+  id        BigInt        @id @default(autoincrement())
+  nome      String
+  descricao String?       @db.Text
+  tipo      TipoMaterial
+
+  variantes VarianteMaterial[]
+  atributos MaterialAtributo[]
+
+  @@map("material")
+}
+
+model Atributo {
+  id        BigInt    @id @default(autoincrement())
+  nome      String
+  tipoValor TipoValor @map("tipo_valor")
+
+  materiais MaterialAtributo[]
+  variantes VarianteAtributo[]
+
+  @@map("atributo")
+}
+
+model VarianteMaterial {
+  id         BigInt @id @default(autoincrement())
+  materialId BigInt @map("material_id")
+
+  material  Material           @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  estoque   Estoque?
+  itens     ItemCapital[]
+  atributos VarianteAtributo[]
+
+  @@index([materialId])
+  @@map("variante_material")
+}
+
+model MaterialAtributo {
+  id         BigInt @id @default(autoincrement())
+  materialId BigInt @map("material_id")
+  atributoId BigInt @map("atributo_id")
+
+  material Material @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  atributo Atributo @relation(fields: [atributoId], references: [id], onDelete: Cascade)
+
+  @@unique([materialId, atributoId])
+  @@map("material_atributo")
+}
+
+model ItemCapital {
+  id                 BigInt    @id @default(autoincrement())
+  varianteMaterialId BigInt    @map("variante_material_id")
+  numeroPatrimonio   String    @unique @map("numero_patrimonio")
+  dataBaixa          DateTime? @map("data_baixa") @db.Date
+
+  variante VarianteMaterial @relation(fields: [varianteMaterialId], references: [id], onDelete: Cascade)
+
+  @@index([varianteMaterialId])
+  @@map("item_capital")
+}
+
+model Estoque {
+  id                 BigInt @id @default(autoincrement())
+  varianteMaterialId BigInt @unique @map("variante_material_id")
+  quantidade         Int    @default(0)
+
+  variante VarianteMaterial @relation(fields: [varianteMaterialId], references: [id], onDelete: Cascade)
+
+  @@map("estoque")
+}
+
+model VarianteAtributo {
+  id                 BigInt   @id @default(autoincrement())
+  varianteMaterialId BigInt   @map("variante_material_id")
+  atributoId         BigInt   @map("atributo_id")
+  valorTexto         String?  @map("valor_texto")
+  valorInteiro       BigInt?  @map("valor_inteiro")
+  valorDecimal       Decimal? @map("valor_decimal") @db.Decimal(18, 6)
+  valorBooleano      Boolean? @map("valor_booleano")
+
+  variante VarianteMaterial @relation(fields: [varianteMaterialId], references: [id], onDelete: Cascade)
+  atributo Atributo         @relation(fields: [atributoId], references: [id], onDelete: Cascade)
+
+  @@unique([varianteMaterialId, atributoId])
+  @@map("variante_atributo")
+}

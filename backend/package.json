@@ -7,6 +7,10 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "lint": "yarn --cwd .. lint:backend",
+    "lint:fix": "yarn --cwd .. lint:backend:fix",
+    "format": "yarn --cwd .. format:backend",
+    "format:check": "yarn --cwd .. format:backend:check",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
@@ -16,7 +20,8 @@
     "@prisma/client": "6",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "zod": "^4.6.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

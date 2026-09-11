@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma.js";
+import { parseWithSchema } from "../lib/validate.js";
+import { createUserSchema, updateUserSchema, userIdParam } from "../schemas/index.js";
 
 const usersRouter = Router();
 
@@ -11,14 +13,12 @@ usersRouter.get("/", async (_req, res) => {
 });
 
 usersRouter.get("/:id", async (req, res) => {
-  const id = Number(req.params.id);
-
-  if (Number.isNaN(id)) {
-    res.status(400).json({ error: "Invalid user id" });
+  const params = parseWithSchema(res, userIdParam, req.params);
+  if (!params) {
     return;
   }
 
-  const user = await prisma.user.findUnique({ where: { id } });
+  const user = await prisma.user.findUnique({ where: { id: params.id } });
 
   if (!user) {
     res.status(404).json({ error: "User not found" });
@@ -29,16 +29,14 @@ usersRouter.get("/:id", async (req, res) => {
 });
 
 usersRouter.post("/", async (req, res) => {
-  const { email, name } = req.body as { email?: string; name?: string };
-
-  if (!email) {
-    res.status(400).json({ error: "Email is required" });
+  const body = parseWithSchema(res, createUserSchema, req.body);
+  if (!body) {
     return;
   }
 
   try {
     const user = await prisma.user.create({
-      data: { email, name },
+      data: { email: body.email, name: body.name },
     });
     res.status(201).json(user);
   } catch {
@@ -47,18 +45,20 @@ usersRouter.post("/", async (req, res) => {
 });
 
 usersRouter.put("/:id", async (req, res) => {
-  const id = Number(req.params.id);
-  const { email, name } = req.body as { email?: string; name?: string };
+  const params = parseWithSchema(res, userIdParam, req.params);
+  if (!params) {
+    return;
+  }
 
-  if (Number.isNaN(id)) {
-    res.status(400).json({ error: "Invalid user id" });
+  const body = parseWithSchema(res, updateUserSchema, req.body);
+  if (!body) {
     return;
   }
 
   try {
     const user = await prisma.user.update({
-      where: { id },
-      data: { email, name },
+      where: { id: params.id },
+      data: body,
     });
     res.json(user);
   } catch {
@@ -67,15 +67,13 @@ usersRouter.put("/:id", async (req, res) => {
 });
 
 usersRouter.delete("/:id", async (req, res) => {
-  const id = Number(req.params.id);
-
-  if (Number.isNaN(id)) {
-    res.status(400).json({ error: "Invalid user id" });
+  const params = parseWithSchema(res, userIdParam, req.params);
+  if (!params) {
     return;
   }
 
   try {
-    await prisma.user.delete({ where: { id } });
+    await prisma.user.delete({ where: { id: params.id } });
     res.status(204).send();
   } catch {
     res.status(404).json({ error: "User not found" });
