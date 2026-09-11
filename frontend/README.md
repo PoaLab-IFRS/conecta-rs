@@ -29,6 +29,41 @@ A aplicação sobe em http://localhost:5173 (porta padrão do Vite).
 | `yarn format`      | Formatação               |
 | `yarn validate`    | Lint + checagem de formato |
 
+## Bibliotecas
+
+| Biblioteca | Uso |
+| ---------- | --- |
+| [React](https://react.dev/) | UI e componentes |
+| [Vite](https://vite.dev/) | Bundler e servidor de desenvolvimento |
+
+## Lint e formatação
+
+As ferramentas estão instaladas na **raiz** do repositório. Na primeira vez:
+
+```bash
+cd ..   # raiz do projeto
+yarn install
+```
+
+A partir de `frontend/`:
+
+```bash
+yarn lint          # analisa o código
+yarn lint:fix      # corrige o que for possível
+yarn format        # formata o código
+yarn format:check  # só verifica a formatação
+yarn validate      # lint + checagem de formato
+```
+
+Equivalente na raiz:
+
+```bash
+yarn lint:frontend
+yarn lint:frontend:fix
+yarn format:frontend
+yarn format:frontend:check
+```
+
 ## Rodar com Docker Compose
 
 O frontend é servido via nginx na stack completa. Na raiz do repositório:

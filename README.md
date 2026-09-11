@@ -1,11 +1,18 @@
 # Conecta RS
 
+## Stack
+
+- **TypeScript** em `frontend` e `backend`
+- **Backend:** Fastify, TypeORM
+- **Frontend:** React, Vite
+- **Validação:** Zod (frontend e backend)
+- **Banco:** MySQL
+- **Node.js** 24 (`.nvmrc` em `frontend/` e `backend/`)
+
 ## Pré-requisitos
 
 - [Docker](https://docs.docker.com/get-docker/) e Docker Compose
 - Ou, para rodar localmente: [NVM](https://github.com/nvm-sh/nvm), Node.js **24** e [Yarn](https://yarnpkg.com/) 1.x
-
-A versão do Node está fixada em `24` (`.nvmrc` em `frontend/` e `backend/`).
 
 ## Estrutura
 

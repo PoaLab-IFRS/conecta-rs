@@ -62,6 +62,43 @@ A API sobe em http://localhost:3000 (ou na porta definida em `PORT` no `.env`).
 | `yarn format`           | Formatação                        |
 | `yarn validate`         | Lint + checagem de formato        |
 
+## Bibliotecas principais
+
+| Biblioteca | Uso |
+| ---------- | --- |
+| [Fastify](https://fastify.dev/) | Framework HTTP da API |
+| [Zod](https://zod.dev/) | Validação de schemas e dados de entrada |
+| [Prisma](https://www.prisma.io/) | ORM e migrations (`@prisma/client` + CLI) |
+| [dotenv](https://github.com/motdotla/dotenv) | Carregamento de variáveis de ambiente |
+
+## Lint e formatação
+
+As ferramentas estão instaladas na **raiz** do repositório. Na primeira vez:
+
+```bash
+cd ..   # raiz do projeto
+yarn install
+```
+
+A partir de `backend/`:
+
+```bash
+yarn lint          # analisa o código
+yarn lint:fix      # corrige o que for possível
+yarn format        # formata o código
+yarn format:check  # só verifica a formatação
+yarn validate      # lint + checagem de formato
+```
+
+Equivalente na raiz:
+
+```bash
+yarn lint:backend
+yarn lint:backend:fix
+yarn format:backend
+yarn format:backend:check
+```
+
 ### Variáveis de ambiente
 
 Veja `.env.example`:
