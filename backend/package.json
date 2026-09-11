@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
@@ -11,22 +14,21 @@
     "lint:fix": "yarn --cwd .. lint:backend:fix",
     "format": "yarn --cwd .. format:backend",
     "format:check": "yarn --cwd .. format:backend:check",
+    "validate": "yarn --cwd .. lint:backend && yarn --cwd .. format:backend:check",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
+    "@fastify/cors": "^11.2.0",
     "@prisma/client": "6",
-    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
+    "fastify": "^5.8.4",
     "zod": "^4.6.2"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/node": "^22.20.2",
+    "@types/node": "^24.13.3",
     "prisma": "6",
     "tsx": "^4.23.13",
     "typescript": "^5.9.2"

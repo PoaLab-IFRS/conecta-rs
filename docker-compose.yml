@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-gestao_poalab}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-conecta_rs}
       MYSQL_USER: ${MYSQL_USER:-poalab}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-poalab}
     ports:
@@ -29,7 +29,7 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 3000
-      DATABASE_URL: mysql://${MYSQL_USER:-poalab}:${MYSQL_PASSWORD:-poalab}@mysql:3306/${MYSQL_DATABASE:-gestao_poalab}
+      DATABASE_URL: mysql://${MYSQL_USER:-poalab}:${MYSQL_PASSWORD:-poalab}@mysql:3306/${MYSQL_DATABASE:-conecta_rs}
     ports:
       - "${BACKEND_PORT:-3000}:3000"
     networks:

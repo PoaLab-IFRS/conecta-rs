@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -10,6 +13,7 @@
     "lint:fix": "yarn --cwd .. lint:frontend:fix",
     "format": "yarn --cwd .. format:frontend",
     "format:check": "yarn --cwd .. format:frontend:check",
+    "validate": "yarn --cwd .. lint:frontend && yarn --cwd .. format:frontend:check",
     "preview": "vite preview"
   },
   "dependencies": {

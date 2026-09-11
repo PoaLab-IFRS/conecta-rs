@@ -1,11 +1,15 @@
-import type { Response } from "express";
+import type { FastifyReply } from "fastify";
 import { z } from "zod";
 
-export function parseWithSchema<T>(res: Response, schema: z.ZodType<T>, value: unknown): T | null {
+export function parseWithSchema<T>(
+  reply: FastifyReply,
+  schema: z.ZodType<T>,
+  value: unknown,
+): T | null {
   const result = schema.safeParse(value);
   if (!result.success) {
-    res.status(400).json({
-      error: "Validation failed",
+    reply.status(400).send({
+      error: "Falha na validação",
       details: result.error.issues.map((issue) => ({
         path: issue.path.join("."),
         message: issue.message,

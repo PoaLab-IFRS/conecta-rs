@@ -1,21 +1,21 @@
-FROM node:22-alpine AS deps
+FROM node:24-alpine AS deps
 WORKDIR /app
 RUN apk add --no-cache openssl
 RUN corepack enable && corepack prepare yarn@1.22.22 --activate
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
 RUN apk add --no-cache openssl
 RUN corepack enable && corepack prepare yarn@1.22.22 --activate
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-ENV DATABASE_URL="mysql://poalab:poalab@mysql:3306/gestao_poalab"
+ENV DATABASE_URL="mysql://poalab:poalab@mysql:3306/conecta_rs"
 RUN yarn prisma generate
 RUN yarn build
 
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 RUN apk add --no-cache openssl

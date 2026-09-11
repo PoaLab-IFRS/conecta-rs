@@ -1,83 +1,78 @@
-import { Router } from "express";
+import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../lib/prisma.js";
 import { parseWithSchema } from "../lib/validate.js";
 import { createUserSchema, updateUserSchema, userIdParam } from "../schemas/index.js";
 
-const usersRouter = Router();
-
-usersRouter.get("/", async (_req, res) => {
-  const users = await prisma.user.findMany({
-    orderBy: { createdAt: "desc" },
+export const usersRoutes: FastifyPluginAsync = async (app) => {
+  app.get("/", async () => {
+    return prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+    });
   });
-  res.json(users);
-});
 
-usersRouter.get("/:id", async (req, res) => {
-  const params = parseWithSchema(res, userIdParam, req.params);
-  if (!params) {
-    return;
-  }
+  app.get("/:id", async (request, reply) => {
+    const params = parseWithSchema(reply, userIdParam, request.params);
+    if (!params) {
+      return;
+    }
 
-  const user = await prisma.user.findUnique({ where: { id: params.id } });
+    const user = await prisma.user.findUnique({ where: { id: params.id } });
 
-  if (!user) {
-    res.status(404).json({ error: "User not found" });
-    return;
-  }
+    if (!user) {
+      return reply.status(404).send({ error: "Usuário não encontrado" });
+    }
 
-  res.json(user);
-});
+    return user;
+  });
 
-usersRouter.post("/", async (req, res) => {
-  const body = parseWithSchema(res, createUserSchema, req.body);
-  if (!body) {
-    return;
-  }
+  app.post("/", async (request, reply) => {
+    const body = parseWithSchema(reply, createUserSchema, request.body);
+    if (!body) {
+      return;
+    }
 
-  try {
-    const user = await prisma.user.create({
-      data: { email: body.email, name: body.name },
-    });
-    res.status(201).json(user);
-  } catch {
-    res.status(409).json({ error: "User with this email already exists" });
-  }
-});
+    try {
+      const user = await prisma.user.create({
+        data: { email: body.email, name: body.name },
+      });
+      return reply.status(201).send(user);
+    } catch {
+      return reply.status(409).send({ error: "Já existe um usuário com este e-mail" });
+    }
+  });
 
-usersRouter.put("/:id", async (req, res) => {
-  const params = parseWithSchema(res, userIdParam, req.params);
-  if (!params) {
-    return;
-  }
+  app.put("/:id", async (request, reply) => {
+    const params = parseWithSchema(reply, userIdParam, request.params);
+    if (!params) {
+      return;
+    }
 
-  const body = parseWithSchema(res, updateUserSchema, req.body);
-  if (!body) {
-    return;
-  }
+    const body = parseWithSchema(reply, updateUserSchema, request.body);
+    if (!body) {
+      return;
+    }
 
-  try {
-    const user = await prisma.user.update({
-      where: { id: params.id },
-      data: body,
-    });
-    res.json(user);
-  } catch {
-    res.status(404).json({ error: "User not found" });
-  }
-});
+    try {
+      return await prisma.user.update({
+        where: { id: params.id },
+        data: body,
+      });
+    } catch {
+      return reply.status(404).send({ error: "Usuário não encontrado" });
+    }
+  });
 
-usersRouter.delete("/:id", async (req, res) => {
-  const params = parseWithSchema(res, userIdParam, req.params);
-  if (!params) {
-    return;
-  }
+  app.delete("/:id", async (request, reply) => {
+    const params = parseWithSchema(reply, userIdParam, request.params);
+    if (!params) {
+      return;
+    }
 
-  try {
-    await prisma.user.delete({ where: { id: params.id } });
-    res.status(204).send();
-  } catch {
-    res.status(404).json({ error: "User not found" });
-  }
-});
-
-export { usersRouter };
+    try {
+      await prisma.user.delete({ where: { id: params.id } });
+      return reply.status(204).send();
+    } catch {
+      return reply.status(404).send({ error: "Usuário não encontrado" });
+    }
+  });
+};

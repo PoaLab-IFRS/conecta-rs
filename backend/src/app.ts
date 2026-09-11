@@ -1,17 +1,17 @@
-import cors from "cors";
-import express from "express";
+import cors from "@fastify/cors";
+import Fastify from "fastify";
 import { routes } from "./routes/index.js";
 
-const app = express();
+export async function buildApp() {
+  const app = Fastify({ logger: false });
 
-app.use(cors());
-app.use(express.json());
+  await app.register(cors);
+  await app.register(routes, { prefix: "/api" });
 
-app.use("/api", routes);
+  app.setErrorHandler((err, _request, reply) => {
+    console.error(err);
+    reply.status(500).send({ error: "Erro interno do servidor" });
+  });
 
-app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  console.error(err);
-  res.status(500).json({ error: "Internal server error" });
-});
-
-export { app };
+  return app;
+}

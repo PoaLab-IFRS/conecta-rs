@@ -1,32 +1,53 @@
-# React + TypeScript + Vite
+# Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## Pré-requisitos
 
-Currently, two official plugins are available:
+- [NVM](https://github.com/nvm-sh/nvm)
+- Node.js **24** (definido em `.nvmrc`)
+- [Yarn](https://yarnpkg.com/) 1.x
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Rodar com NVM
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+cd frontend
+nvm install
+nvm use
+yarn install
+yarn dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+A aplicação sobe em http://localhost:5173 (porta padrão do Vite).
+
+### Scripts úteis
+
+| Comando            | Descrição                |
+| ------------------ | ------------------------ |
+| `yarn dev`         | Servidor de desenvolvimento |
+| `yarn build`       | Build de produção        |
+| `yarn preview`     | Preview do build         |
+| `yarn lint`        | Lint                     |
+| `yarn format`      | Formatação               |
+| `yarn validate`    | Lint + checagem de formato |
+
+## Rodar com Docker Compose
+
+O frontend é servido via nginx na stack completa. Na raiz do repositório:
+
+```bash
+cp .env.example .env   # opcional
+docker compose up --build frontend
+```
+
+Ou suba tudo (MySQL + backend + frontend):
+
+```bash
+docker compose up --build
+```
+
+Acesso padrão: http://localhost:8080 (`FRONTEND_PORT` no `.env` da raiz).
+
+Para build isolado da imagem:
+
+```bash
+docker build -t conecta-rs-frontend .
+```
