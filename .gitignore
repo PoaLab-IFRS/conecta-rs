@@ -1,0 +1,21 @@
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# dependencies
+**/node_modules
+
+# builds
+**/dist
+**/dist-ssr
+
+# prisma generated client (if present)
+**/generated
+
+# logs / tooling
+*.log
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
