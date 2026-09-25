@@ -104,3 +104,10 @@ model Estoque {
 
   @@map("ESTOQUE")
 }
+
+model Capital {
+  id           Int           @id @default(autoincrement())
+  name         String
+  assetNum     String
+  description  String?
+}
