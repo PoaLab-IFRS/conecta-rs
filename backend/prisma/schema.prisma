@@ -14,3 +14,93 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+enum TipoValor {
+  TEXTO
+  INTEIRO
+  DECIMAL
+  BOOLEANO
+}
+
+model Consumo {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  descricao String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  atributos ConsumoAtributo[]
+  variantes VarianteConsumo[]
+
+  @@map("CONSUMO")
+}
+
+model Atributo {
+  id        Int       @id @default(autoincrement())
+  nome      String
+  tipoValor TipoValor @map("tipo_valor")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  consumos  ConsumoAtributo[]
+  variantes VarianteAtributo[]
+
+  @@map("ATRIBUTO")
+}
+
+model ConsumoAtributo {
+  id         Int      @id @default(autoincrement())
+  consumoId  Int      @map("consumo_id")
+  atributoId Int      @map("atributo_id")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  consumo  Consumo  @relation(fields: [consumoId], references: [id], onDelete: Restrict)
+  atributo Atributo @relation(fields: [atributoId], references: [id], onDelete: Restrict)
+
+  @@unique([consumoId, atributoId])
+  @@map("CONSUMO_ATRIBUTO")
+}
+
+model VarianteConsumo {
+  id        Int      @id @default(autoincrement())
+  consumoId Int      @map("consumo_id")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  consumo   Consumo            @relation(fields: [consumoId], references: [id], onDelete: Restrict)
+  atributos VarianteAtributo[]
+  estoque   Estoque?
+
+  @@map("VARIANTE_CONSUMO")
+}
+
+model VarianteAtributo {
+  id                Int      @id @default(autoincrement())
+  varianteConsumoId Int      @map("variante_consumo_id")
+  atributoId        Int      @map("atributo_id")
+  valorTexto        String?  @map("valor_texto")
+  valorInteiro      Int?     @map("valor_inteiro")
+  valorDecimal      Decimal? @map("valor_decimal") @db.Decimal(18, 4)
+  valorBooleano     Boolean? @map("valor_booleano")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  varianteConsumo VarianteConsumo @relation(fields: [varianteConsumoId], references: [id], onDelete: Restrict)
+  atributo        Atributo        @relation(fields: [atributoId], references: [id], onDelete: Restrict)
+
+  @@unique([varianteConsumoId, atributoId])
+  @@map("VARIANTE_ATRIBUTO")
+}
+
+model Estoque {
+  id                Int      @id @default(autoincrement())
+  varianteConsumoId Int      @unique @map("variante_consumo_id")
+  quantidade        Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  varianteConsumo VarianteConsumo @relation(fields: [varianteConsumoId], references: [id], onDelete: Restrict)
+
+  @@map("ESTOQUE")
+}

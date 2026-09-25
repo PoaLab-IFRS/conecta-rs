@@ -1,0 +1,89 @@
+-- CreateTable
+CREATE TABLE `CONSUMO` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `nome` VARCHAR(191) NOT NULL,
+    `descricao` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ATRIBUTO` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `nome` VARCHAR(191) NOT NULL,
+    `tipo_valor` ENUM('TEXTO', 'INTEIRO', 'DECIMAL', 'BOOLEANO') NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `CONSUMO_ATRIBUTO` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `consumo_id` INTEGER NOT NULL,
+    `atributo_id` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `CONSUMO_ATRIBUTO_consumo_id_atributo_id_key`(`consumo_id`, `atributo_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `VARIANTE_CONSUMO` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `consumo_id` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `VARIANTE_ATRIBUTO` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `variante_consumo_id` INTEGER NOT NULL,
+    `atributo_id` INTEGER NOT NULL,
+    `valor_texto` VARCHAR(191) NULL,
+    `valor_inteiro` INTEGER NULL,
+    `valor_decimal` DECIMAL(18, 4) NULL,
+    `valor_booleano` BOOLEAN NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `VARIANTE_ATRIBUTO_variante_consumo_id_atributo_id_key`(`variante_consumo_id`, `atributo_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ESTOQUE` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `variante_consumo_id` INTEGER NOT NULL,
+    `quantidade` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `ESTOQUE_variante_consumo_id_key`(`variante_consumo_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `CONSUMO_ATRIBUTO` ADD CONSTRAINT `CONSUMO_ATRIBUTO_consumo_id_fkey` FOREIGN KEY (`consumo_id`) REFERENCES `CONSUMO`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CONSUMO_ATRIBUTO` ADD CONSTRAINT `CONSUMO_ATRIBUTO_atributo_id_fkey` FOREIGN KEY (`atributo_id`) REFERENCES `ATRIBUTO`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `VARIANTE_CONSUMO` ADD CONSTRAINT `VARIANTE_CONSUMO_consumo_id_fkey` FOREIGN KEY (`consumo_id`) REFERENCES `CONSUMO`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `VARIANTE_ATRIBUTO` ADD CONSTRAINT `VARIANTE_ATRIBUTO_variante_consumo_id_fkey` FOREIGN KEY (`variante_consumo_id`) REFERENCES `VARIANTE_CONSUMO`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `VARIANTE_ATRIBUTO` ADD CONSTRAINT `VARIANTE_ATRIBUTO_atributo_id_fkey` FOREIGN KEY (`atributo_id`) REFERENCES `ATRIBUTO`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ESTOQUE` ADD CONSTRAINT `ESTOQUE_variante_consumo_id_fkey` FOREIGN KEY (`variante_consumo_id`) REFERENCES `VARIANTE_CONSUMO`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

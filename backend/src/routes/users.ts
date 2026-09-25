@@ -1,14 +1,17 @@
 import type { FastifyPluginAsync } from "fastify";
-import { prisma } from "../lib/prisma.js";
+import { AppError, getErrorMessage } from "../lib/errors.js";
 import { parseWithSchema } from "../lib/validate.js";
-import { createUserSchema, updateUserSchema, userIdParam } from "../schemas/index.js";
+import { createUserSchema, updateUserSchema, userIdParam } from "../schemas/user.js";
+import {
+  createUser,
+  deleteUser,
+  getUserById,
+  listUsers,
+  updateUser,
+} from "../services/user/users.js";
 
 export const usersRoutes: FastifyPluginAsync = async (app) => {
-  app.get("/", async () => {
-    return prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-  });
+  app.get("/", async () => listUsers());
 
   app.get("/:id", async (request, reply) => {
     const params = parseWithSchema(reply, userIdParam, request.params);
@@ -16,13 +19,14 @@ export const usersRoutes: FastifyPluginAsync = async (app) => {
       return;
     }
 
-    const user = await prisma.user.findUnique({ where: { id: params.id } });
-
-    if (!user) {
-      return reply.status(404).send({ error: "Usuário não encontrado" });
+    try {
+      return await getUserById(params.id);
+    } catch (error) {
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      return reply.status(statusCode).send({
+        error: getErrorMessage(error, "Falha ao buscar usuário"),
+      });
     }
-
-    return user;
   });
 
   app.post("/", async (request, reply) => {
@@ -32,12 +36,13 @@ export const usersRoutes: FastifyPluginAsync = async (app) => {
     }
 
     try {
-      const user = await prisma.user.create({
-        data: { email: body.email, name: body.name },
-      });
+      const user = await createUser(body);
       return reply.status(201).send(user);
-    } catch {
-      return reply.status(409).send({ error: "Já existe um usuário com este e-mail" });
+    } catch (error) {
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      return reply.status(statusCode).send({
+        error: getErrorMessage(error, "Falha ao criar usuário"),
+      });
     }
   });
 
@@ -53,12 +58,12 @@ export const usersRoutes: FastifyPluginAsync = async (app) => {
     }
 
     try {
-      return await prisma.user.update({
-        where: { id: params.id },
-        data: body,
+      return await updateUser(params.id, body);
+    } catch (error) {
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      return reply.status(statusCode).send({
+        error: getErrorMessage(error, "Falha ao atualizar usuário"),
       });
-    } catch {
-      return reply.status(404).send({ error: "Usuário não encontrado" });
     }
   });
 
@@ -69,10 +74,13 @@ export const usersRoutes: FastifyPluginAsync = async (app) => {
     }
 
     try {
-      await prisma.user.delete({ where: { id: params.id } });
+      await deleteUser(params.id);
       return reply.status(204).send();
-    } catch {
-      return reply.status(404).send({ error: "Usuário não encontrado" });
+    } catch (error) {
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+      return reply.status(statusCode).send({
+        error: getErrorMessage(error, "Falha ao remover usuário"),
+      });
     }
   });
 };
