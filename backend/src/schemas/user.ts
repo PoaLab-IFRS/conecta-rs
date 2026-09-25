@@ -20,3 +20,6 @@ export const updateUserSchema = z
   .refine((data) => data.email !== undefined || data.name !== undefined, {
     message: "Pelo menos um campo é obrigatório",
   });
+
+export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;
