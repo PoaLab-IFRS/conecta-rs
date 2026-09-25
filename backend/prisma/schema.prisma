@@ -1,16 +1,22 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id_user     Int @id @default(autoincrement())
+  name        String 
+  email       String  @unique
+  password    String
+}
+
+model Capital {
+  id_capital  Int @id @default(autoincrement())
+  name        String
+  asset_num   String
+  description String?
 }

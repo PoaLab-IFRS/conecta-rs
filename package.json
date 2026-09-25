@@ -1,22 +1,6 @@
 {
-  "name": "conecta-rs",
-  "private": true,
-  "scripts": {
-    "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
-    "lint:backend": "oxlint backend",
-    "lint:backend:fix": "oxlint --fix backend",
-    "lint:frontend": "oxlint frontend",
-    "lint:frontend:fix": "oxlint --fix frontend",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
-    "format:backend": "oxfmt backend",
-    "format:backend:check": "oxfmt --check backend",
-    "format:frontend": "oxfmt frontend",
-    "format:frontend:check": "oxfmt --check frontend"
-  },
-  "devDependencies": {
-    "oxfmt": "^0.67.0",
-    "oxlint": "^1.82.0"
-  }
+	"dependencies": {
+		"@fastify/swagger": "^9.9.0",
+		"@fastify/swagger-ui": "^6.1.1"
+	}
 }
