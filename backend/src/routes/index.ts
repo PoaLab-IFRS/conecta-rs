@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from "fastify";
 import { atributosRoutes } from "./atributos.js";
 import { consumosRoutes } from "./consumos.js";
 import { usersRoutes } from "./users.js";
+import { capitalRoutes } from "./capital.js";
 
 export const routes: FastifyPluginAsync = async (app) => {
   app.get("/health", async () => ({ status: "ok" }));
@@ -9,4 +10,5 @@ export const routes: FastifyPluginAsync = async (app) => {
   await app.register(usersRoutes, { prefix: "/users" });
   await app.register(consumosRoutes, { prefix: "/consumos" });
   await app.register(atributosRoutes, { prefix: "/atributos" });
+  await app.register(capitalRoutes, { prefix: "/capitais" });
 };
