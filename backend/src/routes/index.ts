@@ -9,6 +9,7 @@ export const routes: FastifyPluginAsync = async (app) => {
 
   await app.register(usersRoutes, { prefix: "/users" });
   await app.register(consumosRoutes, { prefix: "/consumos" });
+  await app.register(capitalRoutes, { prefix: "/capital" })
   await app.register(atributosRoutes, { prefix: "/atributos" });
   await app.register(capitalRoutes, { prefix: "/capitais" });
 };

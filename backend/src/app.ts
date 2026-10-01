@@ -18,10 +18,7 @@ export async function buildApp() {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  await app.register(fastifySwagger, {
-    openapi: {
-  const swaggerEnabled =
-    process.env.SWAGGER_ENABLED === "true";
+  const swaggerEnabled = process.env.SWAGGER_ENABLED === "true";
 
   if (swaggerEnabled) {
     await app.register(fastifySwagger, {
@@ -30,11 +27,8 @@ export async function buildApp() {
           title: "PoaLab: School Inventory",
           version: "1.0.0",
         },
-    },
-    transform: jsonSchemaTransform,
-  });
       },
-      //transform: jsonSchemaTransform,
+      transform: jsonSchemaTransform,
     });
 
     await app.register(fastifySwaggerUi, {
@@ -49,10 +43,11 @@ export async function buildApp() {
   app.setErrorHandler((err, _request, reply) => {
     if (hasZodFastifySchemaValidationErrors(err)) {
       return reply.status(400).send({
-         error: "Erro de validação",
-          details: err.validation, 
-        });
+        error: "Erro de validação",
+        details: err.validation,
+      });
     }
+
     console.error(err);
 
     reply.status(500).send({
@@ -62,6 +57,7 @@ export async function buildApp() {
 
   return app;
 }
+
 
 // import cors from "@fastify/cors";
 // import Fastify from "fastify";
