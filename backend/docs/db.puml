@@ -1,0 +1,107 @@
+@startuml
+
+hide methods
+hide stereotypes
+
+entity "User" as User {
+  * id : INT <<PK>>
+  --
+  email : VARCHAR <<UNIQUE>>
+  name : VARCHAR
+  createdAt : DATETIME
+  updatedAt : DATETIME
+}
+
+entity "CONSUMO" as Consumo {
+  * id : INT <<PK>>
+  --
+  nome : VARCHAR
+  descricao : VARCHAR
+  createdAt : DATETIME
+  updatedAt : DATETIME
+}
+
+entity "ATRIBUTO" as Atributo {
+  * id : INT <<PK>>
+  --
+  nome : VARCHAR
+  tipo_valor : TipoValor
+  createdAt : DATETIME
+  updatedAt : DATETIME
+}
+
+entity "CONSUMO_ATRIBUTO" as ConsumoAtributo {
+  * id : INT <<PK>>
+  --
+  consumo_id : INT <<FK>>
+  atributo_id : INT <<FK>>
+  createdAt : DATETIME
+  updatedAt : DATETIME
+
+  --
+  UK: (consumo_id, atributo_id)
+}
+
+entity "VARIANTE_CONSUMO" as VarianteConsumo {
+  * id : INT <<PK>>
+  --
+  consumo_id : INT <<FK>>
+  createdAt : DATETIME
+  updatedAt : DATETIME
+}
+
+entity "VARIANTE_ATRIBUTO" as VarianteAtributo {
+  * id : INT <<PK>>
+  --
+  variante_consumo_id : INT <<FK>>
+  atributo_id : INT <<FK>>
+  valor_texto : VARCHAR
+  valor_inteiro : INT
+  valor_decimal : DECIMAL(18,4)
+  valor_booleano : BOOLEAN
+  createdAt : DATETIME
+  updatedAt : DATETIME
+
+  --
+  UK: (variante_consumo_id, atributo_id)
+}
+
+entity "ESTOQUE" as Estoque {
+  * id : INT <<PK>>
+  --
+  variante_consumo_id : INT <<FK, UNIQUE>>
+  quantidade : INT
+  createdAt : DATETIME
+  updatedAt : DATETIME
+}
+
+entity "Capital" as Capital {
+  * id : INT <<PK>>
+  --
+  name : VARCHAR
+  assetNum : VARCHAR
+  description : VARCHAR
+}
+
+enum TipoValor {
+  TEXTO
+  INTEIRO
+  DECIMAL
+  BOOLEANO
+}
+
+' Relacionamentos
+
+Consumo ||--o{ ConsumoAtributo : possui
+Atributo ||--o{ ConsumoAtributo : possui
+
+Consumo ||--o{ VarianteConsumo : possui
+
+VarianteConsumo ||--o{ VarianteAtributo : possui
+Atributo ||--o{ VarianteAtributo : possui
+
+VarianteConsumo ||--o| Estoque : possui
+
+Atributo --> TipoValor : utiliza
+
+@enduml
