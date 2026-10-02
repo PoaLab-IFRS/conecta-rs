@@ -1,5 +1,5 @@
-import type { FastifyPluginAsync } from "fastify";
-import { AppError, getErrorMessage } from "../lib/errors.js";
+import type { FastifyError, FastifyPluginAsync } from "fastify";
+import { AppError, getErrorMessage, handleInternalServerError } from "../lib/errors.js";
 import { parseWithSchema } from "../lib/validate.js";
 import {
   consumoIdParam,
@@ -15,6 +15,20 @@ import { updateConsumo } from "../services/consumo/updateConsumo.js";
 import { updateConsumoEstoque } from "../services/consumo/updateConsumoEstoque.js";
 
 export const consumosRoutes: FastifyPluginAsync = async (app) => {
+  const inheritedErrorHandler = app.errorHandler;
+  app.setErrorHandler<FastifyError>(function (error, request, reply) {
+    // Preserve Fastify input errors (e.g. malformed JSON and unsupported media).
+    if (
+      error.code?.startsWith("FST_ERR_") &&
+      error.statusCode !== undefined &&
+      error.statusCode >= 400 &&
+      error.statusCode < 500
+    ) {
+      return inheritedErrorHandler.call(this, error, request, reply);
+    }
+    return handleInternalServerError(error, reply);
+  });
+
   app.get("/", async (request, reply) => {
     const query = parseWithSchema(reply, listConsumoQuery, request.query);
     if (!query) {
@@ -33,8 +47,10 @@ export const consumosRoutes: FastifyPluginAsync = async (app) => {
     try {
       return await getConsumoById(params.id);
     } catch (error) {
-      const statusCode = error instanceof AppError ? error.statusCode : 500;
-      return reply.status(statusCode).send({
+      if (!(error instanceof AppError)) {
+        throw error;
+      }
+      return reply.status(error.statusCode).send({
         error: getErrorMessage(error, "Falha ao buscar consumo"),
       });
     }
@@ -50,10 +66,12 @@ export const consumosRoutes: FastifyPluginAsync = async (app) => {
       const created = await createConsumo(body);
       return reply.status(201).send(created);
     } catch (error) {
-      const statusCode = error instanceof AppError ? error.statusCode : 400;
-      return reply.status(statusCode).send({
+      if (!(error instanceof AppError)) {
+        throw error;
+      }
+      return reply.status(error.statusCode).send({
         error: getErrorMessage(error, "Falha ao criar consumo"),
-        ...(error instanceof AppError ? error.details : undefined),
+        ...error.details,
       });
     }
   });
@@ -72,10 +90,12 @@ export const consumosRoutes: FastifyPluginAsync = async (app) => {
     try {
       return await updateConsumo(params.id, body);
     } catch (error) {
-      const statusCode = error instanceof AppError ? error.statusCode : 400;
-      return reply.status(statusCode).send({
+      if (!(error instanceof AppError)) {
+        throw error;
+      }
+      return reply.status(error.statusCode).send({
         error: getErrorMessage(error, "Falha ao atualizar consumo"),
-        ...(error instanceof AppError ? error.details : undefined),
+        ...error.details,
       });
     }
   });
@@ -90,8 +110,10 @@ export const consumosRoutes: FastifyPluginAsync = async (app) => {
       await deleteConsumo(params.id);
       return reply.status(204).send();
     } catch (error) {
-      const statusCode = error instanceof AppError ? error.statusCode : 400;
-      return reply.status(statusCode).send({
+      if (!(error instanceof AppError)) {
+        throw error;
+      }
+      return reply.status(error.statusCode).send({
         error: getErrorMessage(error, "Falha ao remover consumo"),
       });
     }
@@ -111,8 +133,10 @@ export const consumosRoutes: FastifyPluginAsync = async (app) => {
     try {
       return await updateConsumoEstoque(params.id, body.quantidade);
     } catch (error) {
-      const statusCode = error instanceof AppError ? error.statusCode : 400;
-      return reply.status(statusCode).send({
+      if (!(error instanceof AppError)) {
+        throw error;
+      }
+      return reply.status(error.statusCode).send({
         error: getErrorMessage(error, "Falha ao atualizar estoque"),
       });
     }

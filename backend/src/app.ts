@@ -3,6 +3,7 @@ import Fastify from "fastify";
 import { routes } from "./routes/index.js";
 import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
+import { handleInternalServerError } from "./lib/errors.js";
 
 export async function buildApp() {
   const app = Fastify({ logger: false });
@@ -11,23 +12,22 @@ export async function buildApp() {
 
   await app.register(fastifySwagger, {
     openapi: {
-        info: {
-            title: "PoaLab: School Inventory",
-            version: "1.0.0",
-        },
+      info: {
+        title: "PoaLab: School Inventory",
+        version: "1.0.0",
+      },
     },
     // transform: jsonSchemaTransform,
   });
 
   await app.register(fastifySwaggerUi, {
-      routePrefix: "/docs",
+    routePrefix: "/docs",
   });
 
   await app.register(routes, { prefix: "/api" });
 
   app.setErrorHandler((err, _request, reply) => {
-    console.error(err);
-    reply.status(500).send({ error: "Erro interno do servidor" });
+    handleInternalServerError(err, reply);
   });
 
   return app;
