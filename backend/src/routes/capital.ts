@@ -64,6 +64,7 @@ export const capitalRoutes: FastifyPluginAsyncZod = async (app) => {
                 response: {
                     201: capitalResponseSchema,
                     400: capitalErrorResponseSchema,
+                    409: capitalErrorResponseSchema,
                     500: capitalErrorResponseSchema,
                 }
             },
@@ -73,7 +74,10 @@ export const capitalRoutes: FastifyPluginAsyncZod = async (app) => {
                 return reply.code(201).send(capital);
             } catch (error) {
                 const statusCode =
-                    error instanceof AppError && error.statusCode === 400 ? 400 : 500;
+                    error instanceof AppError &&
+                    (error.statusCode === 400 || error.statusCode === 409)
+                        ? error.statusCode
+                        : 500;
                 return reply.status(statusCode).send({
                     error: getErrorMessage(error, "Falha ao criar capital"),
                     ...(error instanceof AppError ? error.details : undefined),
@@ -92,6 +96,7 @@ export const capitalRoutes: FastifyPluginAsyncZod = async (app) => {
                 response: {
                     200: capitalResponseSchema,
                     400: capitalErrorResponseSchema,
+                    409: capitalErrorResponseSchema,
                     404: capitalErrorResponseSchema,
                     500: capitalErrorResponseSchema,
                 }
@@ -101,7 +106,10 @@ export const capitalRoutes: FastifyPluginAsyncZod = async (app) => {
                 return await updateCapital(request.params.id, request.body);
             } catch (error) {
                 const statusCode =
-                    error instanceof AppError && error.statusCode === 404 ? 404 : 500;
+                    error instanceof AppError &&
+                    (error.statusCode === 404 || error.statusCode === 409)
+                        ? error.statusCode
+                        : 500;
                 return reply.status(statusCode).send({
                     error: getErrorMessage(error, "Falha ao atualizar capital"),
                     ...(error instanceof AppError ? error.details : undefined),

@@ -30,6 +30,7 @@ services:
       HOST: 0.0.0.0
       PORT: 3000
       DATABASE_URL: mysql://${MYSQL_USER:-poalab}:${MYSQL_PASSWORD:-poalab}@mysql:3306/${MYSQL_DATABASE:-conecta_rs}
+      SHADOW_DATABASE_URL: mysql://${MYSQL_USER:-poalab}:${MYSQL_PASSWORD:-poalab}@mysql:3306/conecta_rs_shadow
     ports:
       - "${BACKEND_PORT:-3000}:3000"
     networks:

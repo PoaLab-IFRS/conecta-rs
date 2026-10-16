@@ -1,5 +1,7 @@
 # Changelog
 
+# Version 1
+
 Registro das principais alterações realizadas no projeto Conecta RS.
 
 ### Adicionado
@@ -45,6 +47,38 @@ Frontend:
 - Nenhuma alteração realizada na forma de execução do Projeto
 - Função do Swagger ajustada apenas para a parte de Capital adicionada a essa versão do projeto
 - Para acessar a interface de Capital basta ajustar a url para /capital
+
+
+===============================================================================================
+
+# Version 2
+
+Registro das principais alterações realizadas no projeto Conecta RS.
+
+### Adicionado
+- Adicionado os seguintes campos a parte de Capital
+    -Nota Fiscal
+    -Número de Série
+    -Valor
+    -Nome da Escola
+- Adicionado validação para impedir inserção de capita com número de serie e patrimonio repetidos.
+
+### Ajustado/Criado
+
+Backend
+-   Ajustado schema.prisma com os novos campos
+-   Ajustado routes/capital.ts
+-   Ajustado schemas/capital.ts
+-   Ajustado services/capital/ os seguintes arquivos
+    -createCapital.ts
+    -getCapitalById.ts
+    -listCapital.ts
+    -updateCapital.ts
+-   Ajustado src/app.ts
+
+### Observações
+
+- Foram realizados nessa versão apenas ajustes solicitados a serem feitos
 
 
 

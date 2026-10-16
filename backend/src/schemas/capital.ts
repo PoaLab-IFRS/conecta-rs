@@ -1,5 +1,24 @@
 import {z} from "zod";
 
+const requiredText = (label: string) => z.preprocess(
+  (value) => (value === "" || value === undefined ? null : value),
+  z
+    .string()
+    .trim()
+    .min(1, `${label} é obrigatório preencher esse campo`)
+    .max(191, `${label} deve ter no máximo 191 caracteres`)
+);
+
+const requiredDecimal = z.preprocess(
+  (value) => {
+    if (value === "" || value === undefined) return null;
+    return typeof value === "string" ? value.trim().replace(",", ".") : value;
+  },
+  z
+    .string()
+    .regex(/^-?\d+(\.\d+)?$/, "Informe um valor com até duas casas decimais")
+);
+
 export const listCapitalQuery = z.object({
   nome: z.string().optional(),
   page: z.coerce.number().int().min(1).default(1),
@@ -25,6 +44,10 @@ export const createCapitalSchema = z.object({
          .max(191, "Descrição deve ter no máximo 191 caracteres")
          .nullable()
         ),
+        notaFiscal: requiredText("Nota fiscal"),
+        valor: requiredDecimal,
+        nomeEscola: requiredText("Nome escola"),
+        numeroSerie: requiredText("Número de série"),
 });
 
 export const capitalIdParam = z.object({
@@ -39,6 +62,10 @@ export const capitalResponseSchema = z.object({
   nome: z.string(), 
   assetNum: z.string(),
   descricao: z.string().nullable(),
+  notaFiscal: z.string(),
+  valor: z.string(),
+  nomeEscola: z.string(),
+  numeroSerie: z.string(),
 });
 
 export const listCapitalResponseSchema = z.object({

@@ -15,5 +15,9 @@ export async function getCapitalById(id: number) {
     nome: capital.name,
     assetNum: capital.assetNum,
     descricao: capital.description,
+    notaFiscal: capital.invoiceNumber,
+    valor: capital.value.toString(),
+    nomeEscola: capital.schoolName,
+    numeroSerie: capital.serialNumber,
   };
 }

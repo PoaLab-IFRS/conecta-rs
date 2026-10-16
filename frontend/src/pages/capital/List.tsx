@@ -8,6 +8,10 @@ import type { ListCapitalResponse } from "../../models/capital";
 
 const PAGE_SIZE = 10;
 const FILTER_DEBOUNCE_MS = 500;
+const currencyFormatter = new Intl.NumberFormat("pt-BR", {
+	style: "currency",
+	currency: "BRL",
+});
 
 export function CapitalList() {
 	const [nome, setNome] = useState("");
@@ -94,6 +98,10 @@ export function CapitalList() {
 								<tr>
 									<th scope="col">Nome</th>
 									<th scope="col">Número patrimonial</th>
+									<th scope="col">Nota fiscal</th>
+									<th scope="col">Valor</th>
+									<th scope="col">Nome da escola</th>
+									<th scope="col">Número de série</th>
 									<th scope="col">Descrição</th>
 									<th scope="col" className="text-end">
 										Ações
@@ -106,6 +114,10 @@ export function CapitalList() {
 										<tr key={capital.id}>
 											<td>{capital.nome}</td>
 											<td>{capital.assetNum}</td>
+											<td>{capital.notaFiscal}</td>
+											<td>{currencyFormatter.format(Number(capital.valor))}</td>
+											<td>{capital.nomeEscola}</td>
+											<td>{capital.numeroSerie}</td>
 											<td>{capital.descricao ?? "—"}</td>
 											<td className="text-end">
 												<Link
@@ -121,7 +133,7 @@ export function CapitalList() {
 									))
 								) : (
 									<tr>
-										<td colSpan={4} className="text-muted">
+										<td colSpan={8} className="text-muted">
 											Nenhum item de capital encontrado.
 										</td>
 									</tr>

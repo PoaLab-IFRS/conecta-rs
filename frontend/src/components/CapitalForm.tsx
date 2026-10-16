@@ -7,7 +7,7 @@ import {
 	type CreateCapitalInput,
 } from "../models/capital";
 
-type CapitalFormInitial = Pick<Capital, "nome" | "assetNum" | "descricao">;
+type CapitalFormInitial = Pick<Capital, "nome" | "assetNum" | "descricao" | "notaFiscal" | "valor" | "nomeEscola" | "numeroSerie">;
 
 type SubmitResult = { status: "ok" } | { status: "error" };
 
@@ -38,13 +38,17 @@ export function CapitalForm({
 	const [assetNum, setAssetNum] = useState(initial?.assetNum ?? "");
 	const [descricao, setDescricao] = useState(initial?.descricao ?? "");
 	const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+	const [notaFiscal, setNotaFiscal] = useState(initial?.notaFiscal ?? "");
+	const [valor, setValor] = useState(initial?.valor ?? "");
+	const [nomeEscola, setNomeEscola] = useState(initial?.nomeEscola ?? "");
+	const [numeroSerie, setNumeroSerie] = useState(initial?.numeroSerie ?? "");
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 		setFieldErrors({});
 		onClearError?.();
 
-		const parsed = createCapitalSchema.safeParse({ nome, assetNum, descricao });
+		const parsed = createCapitalSchema.safeParse({ nome, assetNum, descricao, notaFiscal, valor, nomeEscola, numeroSerie });
 		if (!parsed.success) {
 			setFieldErrors(zodIssuesToFieldErrors(parsed.error));
 			return;
@@ -97,6 +101,75 @@ export function CapitalForm({
 					/>
 					{fieldErrors.assetNum && (
 						<div className="invalid-feedback">{fieldErrors.assetNum}</div>
+					)}
+				</div>
+
+				<div className="mb-3">
+					<label className="form-label" htmlFor="notaFiscal">
+						Nota fiscal
+					</label>
+					<input
+						id="notaFiscal"
+						className={`form-control ${fieldErrors.notaFiscal ? "is-invalid" : ""}`}
+						value={notaFiscal}
+						onChange={(event) => setNotaFiscal(event.target.value)}
+						maxLength={191}
+						required
+					/>
+					{fieldErrors.notaFiscal && (
+						<div className="invalid-feedback">{fieldErrors.notaFiscal}</div>
+					)}
+				</div>
+
+				<div className="mb-3">
+					<label className="form-label" htmlFor="valor">
+						Valor
+					</label>
+					<input
+						id="valor"
+						type="text"
+						inputMode="decimal"
+						className={`form-control ${fieldErrors.valor ? "is-invalid" : ""}`}
+						value={valor}
+						onChange={(event) => setValor(event.target.value)}
+						required
+					/>
+					{fieldErrors.valor && (
+						<div className="invalid-feedback">{fieldErrors.valor}</div>
+					)}
+				</div>
+
+				<div className="mb-3">
+					<label className="form-label" htmlFor="nomeEscola">
+						Nome da escola
+					</label>
+					<input
+						id="nomeEscola"
+						className={`form-control ${fieldErrors.nomeEscola ? "is-invalid" : ""}`}
+						value={nomeEscola}
+						onChange={(event) => setNomeEscola(event.target.value)}
+						maxLength={191}
+						required
+					/>
+					{fieldErrors.nomeEscola && (
+						<div className="invalid-feedback">{fieldErrors.nomeEscola}</div>
+					)}
+				</div>
+
+				<div className="mb-3">
+					<label className="form-label" htmlFor="numeroSerie">
+						Número de série
+					</label>
+					<input
+						id="numeroSerie"
+						className={`form-control ${fieldErrors.numeroSerie ? "is-invalid" : ""}`}
+						value={numeroSerie}
+						onChange={(event) => setNumeroSerie(event.target.value)}
+						maxLength={191}
+						required
+					/>
+					{fieldErrors.numeroSerie && (
+						<div className="invalid-feedback">{fieldErrors.numeroSerie}</div>
 					)}
 				</div>
 

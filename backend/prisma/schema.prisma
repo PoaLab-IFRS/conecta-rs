@@ -107,8 +107,12 @@ model Estoque {
 }
 
 model Capital {
-  id           Int           @id @default(autoincrement())
-  name         String
-  assetNum     String
-  description  String?
+  id            Int      @id @default(autoincrement())
+  name          String
+  assetNum      String   @unique(map: "capital_asset_num_unique")
+  description   String?
+  invoiceNumber String   @map("nota_fiscal")
+  value         Decimal  @map("valor") @db.Decimal(10, 2)
+  schoolName    String   @map("nome_escola")
+  serialNumber  String   @unique(map: "capital_numero_serie_unique") @map("numero_serie")
 }

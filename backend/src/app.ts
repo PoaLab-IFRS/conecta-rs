@@ -18,8 +18,7 @@ export async function buildApp() {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
-  const swaggerEnabled =
-    process.env.SWAGGER_ENABLED === "true";
+  const swaggerEnabled = process.env.SWAGGER_ENABLED === "true";
 
   if (swaggerEnabled) {
     await app.register(fastifySwagger, {
