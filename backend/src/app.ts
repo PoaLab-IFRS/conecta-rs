@@ -43,10 +43,11 @@ export async function buildApp() {
   app.setErrorHandler((err, _request, reply) => {
     if (hasZodFastifySchemaValidationErrors(err)) {
       return reply.status(400).send({
-         error: "Erro de validação",
-          details: err.validation, 
-        });
+        error: "Erro de validação",
+        details: err.validation,
+      });
     }
+
     console.error(err);
 
     reply.status(500).send({
