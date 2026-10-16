@@ -51,7 +51,7 @@ export function ConsumoList() {
         <input
           type="search"
           className="form-control"
-          placeholder="Filtrar por nome ou descrição"
+          placeholder="Filtrar por nome, descrição ou atributo"
           value={nome}
           onChange={(event) => setNome(event.target.value)}
         />
