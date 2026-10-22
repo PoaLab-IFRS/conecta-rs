@@ -9,7 +9,9 @@ datasource db {
 }
 
 enum TipoUser {
-
+  ADMIN
+  PROFESSOR
+  USUARIO
 }
 
 model User {
@@ -17,7 +19,7 @@ model User {
   email     String   @unique
   name      String
   senha     String
-  tipoUser  TipoUser
+  tipoUser  TipoUser @map("tipo_user")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
