@@ -38,10 +38,13 @@ export const userRoutes: FastifyPluginAsyncZod = async (app) => {
         try {
             return await listUser(request.query);
         } catch (error) {
-            return reply.status(
-                error instanceof AppError ? error.statusCode : 500
-            ).send({
-                error: getErrorMessage(error, 'Falha ao listar usuários'),
+            const statusCode =
+                error instanceof AppError && error.statusCode === 400
+                ? 400
+                : 500;
+
+            return reply.status(statusCode).send({
+                error: getErrorMessage(error, "Falha ao listar usuários"),
                 ...(error instanceof AppError ? error.details : undefined),
             });
         }
@@ -134,11 +137,11 @@ export const userRoutes: FastifyPluginAsyncZod = async (app) => {
             const statusCode =
                 error instanceof AppError &&
                 [400, 404, 409].includes(error.statusCode)
-                    ? error.statusCode
-                    : 500;
+                ? (error.statusCode as 400 | 404 | 409)
+                : 500;
 
             return reply.status(statusCode).send({
-                error: getErrorMessage(error, 'Falha ao atualizar usuário'),
+                error: getErrorMessage(error, "Falha ao atualizar usuário"),
                 ...(error instanceof AppError ? error.details : undefined),
             });
         }

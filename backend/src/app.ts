@@ -44,7 +44,7 @@ export async function buildApp() {
     if (hasZodFastifySchemaValidationErrors(err)) {
       return reply.status(400).send({
         error: "Erro de validação",
-        details: err.validation,
+        details: err.validation, 
       });
     }
 
