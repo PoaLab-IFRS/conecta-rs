@@ -12,6 +12,7 @@ import { routes } from "./routes/index.js";
 
 export async function buildApp() {
   const app = Fastify({ logger: false });
+  app.decorateRequest("authSession", null);
 
   await app.register(cors);
 

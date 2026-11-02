@@ -31,6 +31,20 @@ services:
       PORT: 3000
       DATABASE_URL: mysql://${MYSQL_USER:-poalab}:${MYSQL_PASSWORD:-poalab}@mysql:3306/${MYSQL_DATABASE:-conecta_rs}
       SHADOW_DATABASE_URL: mysql://${MYSQL_USER:-poalab}:${MYSQL_PASSWORD:-poalab}@mysql:3306/conecta_rs_shadow
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Defina BETTER_AUTH_SECRET no .env da raiz}
+      BETTER_AUTH_BASE_URL: ${BETTER_AUTH_BASE_URL:?Defina BETTER_AUTH_BASE_URL no .env da raiz}
+      FRONTEND_URL: ${FRONTEND_URL:?Defina FRONTEND_URL no .env da raiz}
+      CREATE_ADMIN: ${CREATE_ADMIN:-true}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@conecta.rs}
+      ADMIN_NAME: ${ADMIN_NAME:-Administrador}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-Admin@12345}
+      SWAGGER_ENABLED: ${SWAGGER_ENABLED:-false}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM: ${SMTP_FROM}
     ports:
       - "${BACKEND_PORT:-3000}:3000"
     networks:

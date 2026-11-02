@@ -16,11 +16,21 @@ const requiredDecimal = z.preprocess(
     .regex(/^-?\d+(\.\d+)?$/, "Informe um valor com até duas casas decimais")
 );
 
+const optionalText = z.preprocess(
+  (value: unknown) => (value === "" || value === undefined ? null : value),
+  z
+    .string()
+    .trim()
+    .max(191, "Observação deve ter no máximo 191 caracteres")
+    .nullable(),
+);
+
 export const capitalSchema = z.object({
   id: z.number().int(),
   nome: z.string(),
   assetNum: z.string(),
   descricao: z.string().nullable(),
+  observacao: z.string().nullable(),
   notaFiscal: z.string(),
   valor: z.string(),
   nomeEscola: z.string(),
@@ -48,6 +58,7 @@ export const createCapitalSchema = z.object({
     (value: unknown) => (value === "" || value === undefined ? null : value),
     z.string().trim().max(191, "Descrição deve ter no máximo 191 caracteres").nullable()
   ),
+  observacao: optionalText,
   notaFiscal: requiredText("Nota fiscal"),
   valor: requiredDecimal,
   nomeEscola: requiredText("Nome escola"),

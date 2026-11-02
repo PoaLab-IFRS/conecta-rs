@@ -2,18 +2,23 @@ import type { FastifyPluginAsync } from "fastify";
 import { AppError, getErrorMessage } from "../lib/errors.js";
 import { parseWithSchema } from "../lib/validate.js";
 import { createUserSchema, updateUserSchema, userIdParam } from "../schemas/user.js";
-import {
-  createUser,
-  deleteUser,
-  getUserById,
-  listUsers,
-  updateUser,
-} from "../services/user/users.js";
+import { requireAuth } from "../plugins/requireAuth.js";
+import { requireRole } from "../plugins/requireRole.js";
+import { createUser, deleteUser, getUserById, listUsers, updateUser, } from "../services/user/users.js";
 
 export const usersRoutes: FastifyPluginAsync = async (app) => {
-  app.get("/", async () => listUsers());
+  app.get(
+    "/",
+    {
+      preHandler: [requireAuth, requireRole("admin")],
+    },
+    async () => listUsers());
 
-  app.get("/:id", async (request, reply) => {
+  app.get("/:id",
+    {
+      preHandler: [requireAuth, requireRole("admin")],
+    },
+    async (request, reply) => {
     const params = parseWithSchema(reply, userIdParam, request.params);
     if (!params) {
       return;
@@ -29,14 +34,18 @@ export const usersRoutes: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.post("/", async (request, reply) => {
+  app.post("/", 
+    {
+      preHandler: [requireAuth, requireRole("admin")],
+    },
+    async (request, reply) => {
     const body = parseWithSchema(reply, createUserSchema, request.body);
     if (!body) {
       return;
     }
 
     try {
-      const user = await createUser(body);
+      const user = await createUser(body, request);
       return reply.status(201).send(user);
     } catch (error) {
       const statusCode = error instanceof AppError ? error.statusCode : 500;
@@ -46,11 +55,15 @@ export const usersRoutes: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.put("/:id", async (request, reply) => {
-    const params = parseWithSchema(reply, userIdParam, request.params);
-    if (!params) {
-      return;
-    }
+  app.put("/:id", 
+    {
+      preHandler: [requireAuth, requireRole("admin")],
+    },
+    async (request, reply) => {
+      const params = parseWithSchema(reply, userIdParam, request.params);
+      if (!params) {
+        return;
+      }
 
     const body = parseWithSchema(reply, updateUserSchema, request.body);
     if (!body) {
@@ -67,10 +80,20 @@ export const usersRoutes: FastifyPluginAsync = async (app) => {
     }
   });
 
-  app.delete("/:id", async (request, reply) => {
+  app.delete("/:id", 
+    {
+      preHandler: [requireAuth, requireRole("admin")],
+    },
+    async (request, reply) => {
     const params = parseWithSchema(reply, userIdParam, request.params);
     if (!params) {
       return;
+    }
+
+    if (request.authSession?.user.id === params.id) {
+      return reply.status(400).send({
+        error: "Não é possível excluir o usuário autenticado",
+      });
     }
 
     try {

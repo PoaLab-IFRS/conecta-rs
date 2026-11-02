@@ -1,0 +1,96 @@
+import type { FastifyPluginAsync } from "fastify";
+import { AppError, getErrorMessage } from "../lib/errors.js";
+import { parseWithSchema } from "../lib/validate.js";
+import { requireAuth } from "../plugins/requireAuth.js";
+import { requireRole } from "../plugins/requireRole.js";
+import {
+  createProfileRequestSchema,
+  profileRequestIdParam,
+  reviewProfileRequestSchema,
+} from "../schemas/profileRequest.js";
+import {
+  createProfileRequest,
+  listProfileRequests,
+  reviewProfileRequest,
+} from "../services/user/profileRequest.ts.disabled";
+
+export const profileRequestRoutes: FastifyPluginAsync = async (app) => {
+  app.post("/", async (request, reply) => {
+    const body = parseWithSchema(
+      reply,
+      createProfileRequestSchema,
+      request.body,
+    );
+
+    if (!body) {
+      return;
+    }
+
+    try {
+      const profileRequest = await createProfileRequest(body);
+      return reply.status(201).send(profileRequest);
+    } catch (error) {
+      const statusCode = error instanceof AppError ? error.statusCode : 500;
+
+      return reply.status(statusCode).send({
+        error: getErrorMessage(error, "Falha ao criar solicitação"),
+      });
+    }
+  });
+
+  app.get(
+    "/",
+    {
+      preHandler: [requireAuth, requireRole("admin")],
+    },
+    async (_request, reply) => {
+      try {
+        return await listProfileRequests();
+      } catch (error) {
+        const statusCode = error instanceof AppError ? error.statusCode : 500;
+
+        return reply.status(statusCode).send({
+          error: getErrorMessage(error, "Falha ao listar solicitações"),
+        });
+      }
+    },
+  );
+
+  app.patch(
+    "/:id",
+    {
+      preHandler: [requireAuth, requireRole("admin")],
+    },
+    async (request, reply) => {
+      const params = parseWithSchema(
+        reply,
+        profileRequestIdParam,
+        request.params,
+      );
+
+      if (!params) {
+        return;
+      }
+
+      const body = parseWithSchema(
+        reply,
+        reviewProfileRequestSchema,
+        request.body,
+      );
+
+      if (!body) {
+        return;
+      }
+
+      try {
+        return await reviewProfileRequest(params.id, body);
+      } catch (error) {
+        const statusCode = error instanceof AppError ? error.statusCode : 500;
+
+        return reply.status(statusCode).send({
+          error: getErrorMessage(error, "Falha ao analisar solicitação"),
+        });
+      }
+    },
+  );
+};

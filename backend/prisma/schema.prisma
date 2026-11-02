@@ -15,13 +15,66 @@ enum TipoUser {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        String      @id
+  email     String      @unique
   name      String
-  senha     String
-  tipoUser  TipoUser @map("tipo_user")
+  emailVerified Boolean @default(false)
+  image     String?
+  role      String?
+  banned    Boolean?
+  banReason String?
+  banExpires DateTime?
+  tipoUser  TipoUser @default(USUARIO) @map("tipo_user")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  sessions  Session[]
+  accounts  Account[]
+}
+
+model Session {
+  id   String @id
+  expiresAt DateTime
+  token String @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  impersonatedBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+}
+model Account {
+  id                    String   @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?  @db.Text
+  refreshToken          String?  @db.Text
+  idToken               String?  @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?  @db.Text
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+
+model Verification {
+  id String @id
+  identifier String
+  value String  @db.Text
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([identifier])
 }
 
 enum TipoValor {
@@ -123,4 +176,5 @@ model Capital {
   value         Decimal  @map("valor") @db.Decimal(10, 2)
   schoolName    String   @map("nome_escola")
   serialNumber  String   @unique(map: "capital_numero_serie_unique") @map("numero_serie")
+  observation   String?  @map("observação")
 }

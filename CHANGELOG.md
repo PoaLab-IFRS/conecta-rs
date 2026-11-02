@@ -81,5 +81,54 @@ Backend
 - Foram realizados nessa versão apenas ajustes solicitados a serem feitos
 
 
+===============================================================================================
+
+# Version 3
+
+Registro das principais alterações realizadas no projeto Conecta RS.
+
+### Adicionado
+- Adicionado autenticação e controle de sessão de usuários com Better Auth.
+- Adicionado gerenciamento de usuários para administradores.
+    - Criação, edição e exclusão de usuários.
+    - Definição dos tipos ADMIN, PROFESSOR e USUARIO.
+    - Proteção das rotas administrativas e restrição de acesso por perfil.
+- Adicionado página de login e recuperação de senha.
+- Adicionado envio de e-mail para redefinição de senha.
+- Adicionado campo de observação aos itens de Capital.
+- Adicionado criação automática do usuário administrador durante a inicialização do backend.
+- Adicionado configuração de autenticação, SMTP e criação do administrador ao Docker Compose.
+
+### Ajustado/Criado
+
+Backend
+- Ajustado o modelo User para utilizar identificadores em texto e integrar os dados de autenticação.
+- Criados os modelos Session, Account e Verification no schema.prisma.
+- Criados os arquivos de autenticação, rotas e plugins de autorização:
+    - auth.ts
+    - requireAuth.ts
+    - requireRole.ts
+- Ajustadas as rotas de usuários para exigir autenticação e perfil de administrador.
+- Ajustados os serviços e schemas de usuários para criação, edição e exclusão de contas.
+- Ajustado o modelo Capital com o campo observation/observacao.
+- Ajustados os serviços de criação, listagem, consulta e edição de Capital para incluir observação.
+- Ajustado o schema de Capital com validação da observação em até 191 caracteres.
+- Ajustados os arquivos Docker, Docker Compose, scripts de inicialização e variáveis de ambiente para autenticação, e-mail e administrador.
+- Adicionado o script create-admin.ts para criação ou atualização do administrador.
+
+Frontend
+- Ajustado o roteamento para proteger páginas por autenticação e perfil de administrador.
+- Criadas as páginas de login, redefinição de senha, menu e gerenciamento de usuários.
+- Criados os componentes RequireAuth, RequireAdmin e layout principal da aplicação.
+- Ajustada a integração com Better Auth, incluindo login, sessão, logout e recuperação de senha.
+- Ajustado o formulário e a listagem de Capital para exibir e editar a observação.
+- Ajustado o cliente HTTP e a configuração do Vite para integração com o backend autenticado.
+
+### Observações
+
+- Nesta versão, além dos ajustes em Capital, foram implementadas autenticação, autorização por perfil, gerenciamento de usuários e recuperação de senha.
+- A criação inicial do administrador pode ser habilitada pelas variáveis de ambiente CREATE_ADMIN e ADMIN_*.
+- O envio de e-mails de redefinição de senha depende das configurações SMTP.
+
 
 

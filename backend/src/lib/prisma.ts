@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import mysql from "mysql2/promise";
+
 
 declare global {
   var __prisma: PrismaClient | undefined;

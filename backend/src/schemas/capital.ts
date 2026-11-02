@@ -1,4 +1,4 @@
-import {z} from "zod";
+import {maxLength, z} from "zod";
 
 const requiredText = (label: string) => z.preprocess(
   (value) => (value === "" || value === undefined ? null : value),
@@ -17,6 +17,15 @@ const requiredDecimal = z.preprocess(
   z
     .string()
     .regex(/^-?\d+(\.\d+)?$/, "Informe um valor com até duas casas decimais")
+);
+
+const optionalText = (label: string, maxLength: number) => z.preprocess(
+  (value) => (value === "" || value === undefined ? null : value),
+  z
+    .string()
+    .trim()
+    .max(maxLength, `${label} deve ter no máximo ${maxLength} caracteres`)
+    .nullable()
 );
 
 export const listCapitalQuery = z.object({
@@ -44,6 +53,7 @@ export const createCapitalSchema = z.object({
          .max(191, "Descrição deve ter no máximo 191 caracteres")
          .nullable()
         ),
+        observacao: optionalText("Observação", 191),
         notaFiscal: requiredText("Nota fiscal"),
         valor: requiredDecimal,
         nomeEscola: requiredText("Nome escola"),
@@ -62,6 +72,7 @@ export const capitalResponseSchema = z.object({
   nome: z.string(), 
   assetNum: z.string(),
   descricao: z.string().nullable(),
+  observacao: z.string().nullable(),
   notaFiscal: z.string(),
   valor: z.string(),
   nomeEscola: z.string(),

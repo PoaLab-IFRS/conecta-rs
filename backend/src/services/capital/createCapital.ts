@@ -39,6 +39,7 @@ export async function createCapital(input: CreateCapitalInput) {
         value: input.valor,
         schoolName: input.nomeEscola,
         serialNumber: input.numeroSerie,
+        observation: input.observacao?.trim() || null,
       },
     });
   } catch (error) {
@@ -59,6 +60,7 @@ export async function createCapital(input: CreateCapitalInput) {
     nome: capital.name,
     assetNum: capital.assetNum,
     descricao: capital.description,
+    observacao: capital.observation,
     notaFiscal: capital.invoiceNumber,
     valor: capital.value.toString(),
     nomeEscola: capital.schoolName,

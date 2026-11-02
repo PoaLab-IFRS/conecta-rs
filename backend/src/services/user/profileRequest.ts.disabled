@@ -1,0 +1,83 @@
+import { AppError } from "../../lib/errors.js";
+import { prisma } from "../../lib/prisma.js";
+import type {
+  CreateProfileRequestInput,
+  ReviewProfileRequestInput,
+} from "../../schemas/profileRequest.js";
+
+export async function createProfileRequest(
+  input: CreateProfileRequestInput,
+) {
+  const pendingRequest = await prisma.profileRequest.findFirst({
+    where: {
+      email: input.email,
+      status: "PENDENTE",
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (pendingRequest) {
+    throw new AppError(
+      "Já existe uma solicitação pendente para este e-mail",
+      409,
+    );
+  }
+
+  return prisma.profileRequest.create({
+    data: {
+      name: input.name,
+      email: input.email,
+    },
+  });
+}
+
+export async function listProfileRequests() {
+  return prisma.profileRequest.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+}
+
+export async function reviewProfileRequest(
+  id: number,
+  input: ReviewProfileRequestInput,
+) {
+  const result = await prisma.profileRequest.updateMany({
+    where: {
+      id,
+      status: "PENDENTE",
+    },
+    data: {
+      status: input.status,
+    },
+  });
+
+  if (result.count === 0) {
+    const existingRequest = await prisma.profileRequest.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!existingRequest) {
+      throw new AppError("Solicitação não encontrada", 404);
+    }
+
+    throw new AppError(
+      "Esta solicitação já foi analisada",
+      409,
+    );
+  }
+
+  const updatedRequest = await prisma.profileRequest.findUnique({
+    where: { id },
+  });
+
+  if (!updatedRequest) {
+    throw new AppError("Solicitação não encontrada", 404);
+  }
+
+  return updatedRequest;
+}

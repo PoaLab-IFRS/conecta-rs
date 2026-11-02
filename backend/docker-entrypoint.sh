@@ -13,5 +13,10 @@ until yarn prisma migrate deploy; do
   sleep 2
 done
 
+if [ "${CREATE_ADMIN:-true}" = "true" ]; then
+  echo "Creating or updating the administrator..."
+  yarn create-admin
+fi
+
 echo "Starting API..."
 exec node dist/index.js

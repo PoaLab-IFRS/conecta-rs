@@ -103,6 +103,7 @@ export function CapitalList() {
 									<th scope="col">Nome da escola</th>
 									<th scope="col">Número de série</th>
 									<th scope="col">Descrição</th>
+									<th scope="col">Observações</th>
 									<th scope="col" className="text-end">
 										Ações
 									</th>
@@ -119,6 +120,7 @@ export function CapitalList() {
 											<td>{capital.nomeEscola}</td>
 											<td>{capital.numeroSerie}</td>
 											<td>{capital.descricao ?? "—"}</td>
+											<td>{capital.observacao ?? "—"}</td>
 											<td className="text-end">
 												<Link
 													to={`/capital/${capital.id}/editar`}
@@ -133,7 +135,7 @@ export function CapitalList() {
 									))
 								) : (
 									<tr>
-										<td colSpan={8} className="text-muted">
+										<td colSpan={9} className="text-muted">
 											Nenhum item de capital encontrado.
 										</td>
 									</tr>
