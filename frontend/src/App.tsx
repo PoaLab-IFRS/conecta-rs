@@ -20,8 +20,8 @@ function App() {
         <Route path="/capital" element={<CapitalList />} />
         <Route path="/capital/novo" element={<CapitalNew />} />
         <Route path="/capital/:id/editar" element={<CapitalEdit />} />
-        <Route path="/user" element={<UserEdit />} />
-        <Route path="/user/:id/editar" element={<UserList />} />
+        <Route path="/user" element={<UserList />} />
+        <Route path="/user/:id/editar" element={<UserEdit />} />
         <Route path="/user/novo" element = {<UserNew />} />
       </Routes>
     </BrowserRouter>

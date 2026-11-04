@@ -7,7 +7,14 @@ type UserFormInitial = Pick<User, "email" | "name" | "tipoUser">;
 
 type SubmitResult = { status: "ok" } | { status: "error" };
 
-type UserFormProps = { title: string; initial?: UserFormInitial; submitLabel?: string; loading?: boolean; error?: string | null; onClearError?: () => void; onSubmit: (input: CreateUserInput) => Promise<SubmitResult>; onSuccess: () => void; onDeleteClick?: () => void; };
+type UserFormProps = { 
+	title: string; initial?: UserFormInitial; 
+	submitLabel?: string; loading?: boolean; 
+	error?: string | null; 
+	onClearError?: () => void; 
+	onSubmit: (input: CreateUserInput) => Promise<SubmitResult>; 
+	onSuccess: () => void; onDeleteClick?: () => void; 
+	};
 
 export function UserForm({ title, initial, submitLabel = "Salvar", loading = false, error = null, onClearError, onSubmit, onSuccess, onDeleteClick, }: UserFormProps) { const [name, setName] = useState(initial?.name ?? ""); const [email, setEmail] = useState(initial?.email ?? ""); const [senha, setSenha] = useState(""); const [tipoUser, setTipoUser] = useState<TipoUser>( initial?.tipoUser ?? "USUARIO" ); const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 

@@ -15,13 +15,13 @@ export const tipoUserSchema = z.enum([
 ]);
 
 export const userSchema = z.object({
-  id: z.number().int(),
-  email: z.string().email(),
-  name: z.string(),
-  senha: z.string(),
-  tipoUser: tipoUserSchema,
-  createdAt: z.date(),
-  updatedAt: z.date(),
+    id: z.number().int(),
+    email: z.string().email(),
+    name: z.string(),
+    senha: z.string().optional(),
+    tipoUser: tipoUserSchema,
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date(),
 });
 
 export const listUserQuerySchema = paginationQuerySchema.extend({

@@ -5,17 +5,45 @@ import { useDeleteUser } from "../../api/usuario/useDeleteUser";
 import { useUpdateUser } from "../../api/usuario/useUpdateUser"; 
 import { UserForm } from "../../components/UserForm";
 
+const mockUser = {
+    id: 1,
+    name: "Usuário de Teste",
+    email: "teste@email.com",
+    tipoUser: "ADMIN",
+	createdAt: new Date(),
+    updatedAt: new Date()
+} as const;
+
 export function UserEdit() { 
     const navigate = useNavigate(); 
-    const params = useParams();
-    const id = params.id ? Number(params.id) : null;
-    const validId = id !== null && Number.isInteger(id) && id > 0 ? id : null;
+    // const params = useParams();
+    // const id = params.id ? Number(params.id) : null;
+    // const validId = id !== null && Number.isInteger(id) && id > 0 ? id : null;
+	const params = useParams();
+
+	const isTestMode = !params.id;
+
+	const id = params.id ? Number(params.id) : null;
+
+	const validId = isTestMode
+		? 1
+		: id !== null && Number.isInteger(id) && id > 0
+			? id
+			: null;
+
+// const {
+// 	data,
+// 	loading: loadingUser,
+// 	error: loadError,
+// } = useUser(validId);
 
 const {
-	data,
-	loading: loadingUser,
-	error: loadError,
-} = useUser(validId);
+    data: userData,
+    loading: loadingUser,
+    error: loadError,
+} = useUser(isTestMode ? null : validId);
+
+const data = isTestMode ? mockUser : userData;
 
 const {
 	update,
@@ -73,12 +101,25 @@ return (
 				void navigate("/user");
 			}}
 			onDeleteClick={() => setConfirmDelete(true)}
-			onSubmit={async (input) => {
-				const result = await update(validId, input);
+			// onSubmit={async (input) => {
+			// 	const result = await update(validId, input);
 
-				return result.status === "updated"
-					? { status: "ok" }
-					: { status: "error" };
+			// 	return result.status === "updated"
+			// 		? { status: "ok" }
+			// 		: { status: "error" };
+			// }}
+			onSubmit={async (input) => {
+			if (isTestMode) {
+				console.log("Dados do usuário de teste:", input);
+
+				return { status: "ok" };
+			}
+
+			const result = await update(validId!, input);
+
+			return result.status === "updated"
+				? { status: "ok" }
+				: { status: "error" };
 			}}
 		/>
 
