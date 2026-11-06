@@ -7,9 +7,11 @@ type PaginationProps = {
 
 export function Pagination({ page, totalPages, total, onPageChange }: PaginationProps) {
   return (
-    <div className="d-flex justify-content-between align-items-center">
-      <span className="text-muted small">{total} registro(s)</span>
-      <div className="btn-group">
+    <div className="pagination-bar">
+      <span className="text-muted small" role="status">
+        {total} registro(s)
+      </span>
+      <div className="btn-group" role="group" aria-label="Paginação">
         <button
           type="button"
           className="btn btn-outline-secondary btn-sm"
