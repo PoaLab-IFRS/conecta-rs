@@ -1,0 +1,41 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Administrador" as admin
+actor "Professor" as prof
+
+package "Módulo Mestre — Gestão Patrimonial (PoALAB)" {
+
+  ' Casos de Uso do Escopo do Time 1 (Bens de Capital e Gestão)
+  usecase "Cadastrar Bem de Capital\n(Ativo Patrimonial)" as UC_CadCapital
+  usecase "Listar e Consultar\nBens de Capital" as UC_ListCapital
+  usecase "Gerar Código de Tombamento" as UC_Tombamento
+
+  usecase "Gerenciar Fornecedores" as UC_Fornecedores
+  usecase "Cadastrar Espaço Maker\n(Unidade)" as UC_EspacoMaker
+  usecase "Gerenciar Usuários" as UC_Usuarios
+
+  ' Autenticação
+  usecase "Autenticar-se" as UC_Auth
+  usecase "Solicitar Acesso / Recuperar Senha" as UC_Recuperar
+}
+
+' Associações com os Atores (Sem casos de uso soltos)
+admin --> UC_Auth
+admin --> UC_CadCapital
+admin --> UC_ListCapital
+admin --> UC_Fornecedores
+admin --> UC_EspacoMaker
+admin --> UC_Usuarios
+
+prof --> UC_Auth
+prof --> UC_ListCapital
+
+' <<include>> = Obrigatório (Cadastrar Bem obriga a criação do Tombamento)
+UC_CadCapital ..> UC_Tombamento : <<include>>
+
+' <<extend>> = Opcional (Falha na Autenticação estende para Recuperar Senha)
+UC_Auth <.. UC_Recuperar : <<extend>>
+
+@enduml
