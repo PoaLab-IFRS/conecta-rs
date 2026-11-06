@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useId, useState } from "react";
 import { useUpdateConsumoEstoque } from "../api/consumo/useUpdateConsumoEstoque";
 import { updateConsumoEstoqueSchema } from "../models/consumo";
 
@@ -9,14 +9,10 @@ type EstoqueEditorProps = {
 };
 
 export function EstoqueEditor({ consumoId, quantidadeInicial, onSaved }: EstoqueEditorProps) {
+  const inputId = useId();
   const [valor, setValor] = useState(String(quantidadeInicial));
   const [formError, setFormError] = useState<string | null>(null);
   const { update, loading, error } = useUpdateConsumoEstoque();
-
-  useEffect(() => {
-    setValor(String(quantidadeInicial));
-    setFormError(null);
-  }, [consumoId, quantidadeInicial]);
 
   function adjust(delta: number) {
     const parsed = Number.parseInt(valor, 10);
@@ -41,12 +37,11 @@ export function EstoqueEditor({ consumoId, quantidadeInicial, onSaved }: Estoque
   }
 
   return (
-    <div
-      className="d-flex flex-column align-items-end"
-      onClick={(event) => event.stopPropagation()}
-    >
-      <label className="form-label">Estoque</label>
-      <div className="input-group" style={{ maxWidth: "220px" }}>
+    <div className="stock-editor" onClick={(event) => event.stopPropagation()}>
+      <label className="form-label" htmlFor={inputId}>
+        Estoque
+      </label>
+      <div className="input-group">
         <button
           type="button"
           className="btn btn-outline-secondary"
@@ -57,6 +52,7 @@ export function EstoqueEditor({ consumoId, quantidadeInicial, onSaved }: Estoque
           −
         </button>
         <input
+          id={inputId}
           type="number"
           min={0}
           step={1}
@@ -87,7 +83,9 @@ export function EstoqueEditor({ consumoId, quantidadeInicial, onSaved }: Estoque
         {loading ? "Salvando..." : "Salvar"}
       </button>
       {(formError || error) && (
-        <div className="text-danger small mt-2 text-end">{formError ?? error}</div>
+        <div className="text-danger small mt-2 text-end" role="alert">
+          {formError ?? error}
+        </div>
       )}
     </div>
   );

@@ -1,3 +1,4 @@
+import { Dialog } from "./Dialog";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAtributos } from "../api/atributo/useAtributos";
@@ -169,13 +170,16 @@ export function ConsumoForm({
     setNomeCustomizado(initial.nome);
     setDescricao(initial.descricao ?? "");
     setQuantidade(String(initial.quantidadeEstoque));
-    setGerarNomeAutomatico(initial.nome === buildConsumoNomeFromAtributos(
-      initial.atributos.map((atributo) => ({
-        nome: atributo.nome,
-        tipoValor: atributo.tipoValor,
-        valor: valorToInput(atributo),
-      })),
-    ));
+    setGerarNomeAutomatico(
+      initial.nome ===
+        buildConsumoNomeFromAtributos(
+          initial.atributos.map((atributo) => ({
+            nome: atributo.nome,
+            tipoValor: atributo.tipoValor,
+            valor: valorToInput(atributo),
+          })),
+        ),
+    );
     setInitialized(true);
   }, [atributos, initial, initialized]);
 
@@ -265,8 +269,8 @@ export function ConsumoForm({
   }
 
   return (
-    <div className="container py-4" style={{ maxWidth: "880px" }}>
-      <div className="d-flex justify-content-between align-items-center mb-4">
+    <div className="form-page">
+      <div className="page-header">
         <h1 className="h3 mb-0">{title}</h1>
         <Link to="/consumo" className="btn btn-outline-secondary">
           Voltar
@@ -274,6 +278,7 @@ export function ConsumoForm({
       </div>
 
       <form
+        className="surface"
         onSubmit={(event) => {
           event.preventDefault();
           void submitPayload(false);
@@ -345,7 +350,7 @@ export function ConsumoForm({
           )}
         </div>
 
-        <div className="d-flex justify-content-between align-items-center mb-3">
+        <div className="section-header">
           <h2 className="h5 mb-0">Atributos</h2>
           <button
             type="button"
@@ -367,11 +372,14 @@ export function ConsumoForm({
               const valorError = fieldErrors[`atributos.${index}.valor`];
 
               return (
-                <div key={row.key} className="border rounded p-3">
+                <div key={row.key} className="attribute-row">
                   <div className="row g-2 align-items-end">
                     <div className="col-md-4">
-                      <label className="form-label">Atributo</label>
+                      <label className="form-label" htmlFor={`atributo-${row.key}`}>
+                        Atributo
+                      </label>
                       <Autocomplete
+                        id={`atributo-${row.key}`}
                         value={row.nome}
                         options={options}
                         placeholder="Buscar ou criar atributo"
@@ -410,14 +418,20 @@ export function ConsumoForm({
                     </div>
 
                     <div className="col-md-3">
-                      <label className="form-label">Tipo</label>
+                      <label className="form-label" htmlFor={`tipo-${row.key}`}>
+                        Tipo
+                      </label>
                       {row.isNew ? (
                         <select
+                          id={`tipo-${row.key}`}
                           className={`form-select ${tipoError ? "is-invalid" : ""}`}
                           value={row.tipoValor}
                           onChange={(event) =>
                             updateRow(row.key, {
-                              tipoValor: event.target.value as TipoValor | "",
+                              tipoValor:
+                                TIPO_VALOR_OPTIONS.find(
+                                  (option) => option.value === event.target.value,
+                                )?.value ?? "",
                               valor: "",
                             })
                           }
@@ -431,6 +445,7 @@ export function ConsumoForm({
                         </select>
                       ) : (
                         <input
+                          id={`tipo-${row.key}`}
                           className="form-control"
                           value={
                             TIPO_VALOR_OPTIONS.find(
@@ -445,8 +460,11 @@ export function ConsumoForm({
                     </div>
 
                     <div className="col-md-4">
-                      <label className="form-label">Valor</label>
+                      <label className="form-label" htmlFor={`valor-${row.key}`}>
+                        Valor
+                      </label>
                       <AtributoValorInput
+                        id={`valor-${row.key}`}
                         atributoId={row.atributoId}
                         tipoValor={row.tipoValor}
                         value={row.valor}
@@ -478,10 +496,12 @@ export function ConsumoForm({
         )}
 
         {(fieldErrors._form || error) && (
-          <div className="alert alert-danger">{fieldErrors._form ?? error}</div>
+          <div className="alert alert-danger" role="alert">
+            {fieldErrors._form ?? error}
+          </div>
         )}
 
-        <div className="d-flex flex-wrap gap-2 justify-content-between">
+        <div className="form-actions">
           <div className="d-flex gap-2">
             <button type="submit" className="btn btn-primary" disabled={loading || savingEstoque}>
               {loading ? "Salvando..." : submitLabel}
@@ -505,107 +525,91 @@ export function ConsumoForm({
       </form>
 
       {conflict && (
-        <div
-          className="modal fade show d-block"
-          tabIndex={-1}
-          role="dialog"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.45)" }}
+        <Dialog
+          title={conflict.tipo === "exato" ? "Consumo já existe" : "Consumo parecido encontrado"}
+          busy={savingEstoque || loading}
+          onClose={() => setConflict(null)}
+          actions={
+            <>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => setConflict(null)}
+                disabled={savingEstoque || loading}
+              >
+                Cancelar
+              </button>
+              {conflict.tipo === "parcial" && (
+                <button
+                  type="button"
+                  className="btn btn-outline-primary"
+                  onClick={() => {
+                    setConflict(null);
+                    void submitPayload(true);
+                  }}
+                  disabled={savingEstoque || loading}
+                >
+                  {loading ? "Salvando..." : forceActionLabel}
+                </button>
+              )}
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => void handleConfirmAddEstoque()}
+                disabled={savingEstoque || loading}
+              >
+                {savingEstoque ? "Adicionando..." : "Adicionar ao existente"}
+              </button>
+            </>
+          }
         >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h2 className="modal-title fs-5">
-                  {conflict.tipo === "exato" ? "Consumo já existe" : "Consumo parecido encontrado"}
-                </h2>
-                <button
-                  type="button"
-                  className="btn-close"
-                  aria-label="Fechar"
-                  onClick={() => setConflict(null)}
-                />
-              </div>
-              <div className="modal-body">
-                {conflict.tipo === "exato" ? (
-                  <p className="mb-2">
-                    Já existe o material <strong>{conflict.consumoExistente.nome}</strong> com os
-                    mesmos atributos.
-                  </p>
-                ) : conflict.motivo === "subconjunto_do_existente" ? (
-                  <p className="mb-2">
-                    Os atributos informados correspondem a parte do material{" "}
-                    <strong>{conflict.consumoExistente.nome}</strong>. Você pode adicionar a
-                    quantidade a esse material ou continuar mesmo assim.
-                  </p>
-                ) : (
-                  <p className="mb-2">
-                    Os atributos informados incluem o material{" "}
-                    <strong>{conflict.consumoExistente.nome}</strong>, com atributos extras. Você
-                    pode adicionar a quantidade a esse material ou continuar mesmo assim.
-                  </p>
-                )}
+          {conflict.tipo === "exato" ? (
+            <p className="mb-2">
+              Já existe o material <strong>{conflict.consumoExistente.nome}</strong> com os mesmos
+              atributos.
+            </p>
+          ) : conflict.motivo === "subconjunto_do_existente" ? (
+            <p className="mb-2">
+              Os atributos informados correspondem a parte do material{" "}
+              <strong>{conflict.consumoExistente.nome}</strong>. Você pode adicionar a quantidade a
+              esse material ou continuar mesmo assim.
+            </p>
+          ) : (
+            <p className="mb-2">
+              Os atributos informados incluem o material{" "}
+              <strong>{conflict.consumoExistente.nome}</strong>, com atributos extras. Você pode
+              adicionar a quantidade a esse material ou continuar mesmo assim.
+            </p>
+          )}
 
-                {conflict.consumoExistente.atributos.length > 0 && (
-                  <div className="table-responsive mb-3">
-                    <table className="table table-sm table-bordered mb-0">
-                      <thead>
-                        <tr>
-                          <th>Atributo</th>
-                          <th>Valor</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {conflict.consumoExistente.atributos.map((atributo) => (
-                          <tr key={atributo.nome}>
-                            <td>{atributo.nome}</td>
-                            <td>{formatAtributoValor(atributo)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                <p className="mb-0 text-muted">
-                  Estoque atual: {conflict.consumoExistente.quantidadeEstoque}. Quantidade a
-                  adicionar: {pendingPayload?.quantidade ?? 0}. Novo total:{" "}
-                  {conflict.consumoExistente.quantidadeEstoque + (pendingPayload?.quantidade ?? 0)}.
-                </p>
-                {estoqueError && <div className="alert alert-danger mt-3 mb-0">{estoqueError}</div>}
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={() => setConflict(null)}
-                  disabled={savingEstoque || loading}
-                >
-                  Cancelar
-                </button>
-                {conflict.tipo === "parcial" && (
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary"
-                    onClick={() => {
-                      setConflict(null);
-                      void submitPayload(true);
-                    }}
-                    disabled={savingEstoque || loading}
-                  >
-                    {loading ? "Salvando..." : forceActionLabel}
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => void handleConfirmAddEstoque()}
-                  disabled={savingEstoque || loading}
-                >
-                  {savingEstoque ? "Adicionando..." : "Adicionar ao existente"}
-                </button>
-              </div>
+          {conflict.consumoExistente.atributos.length > 0 && (
+            <div className="table-responsive mb-3">
+              <table className="table table-sm table-bordered mb-0">
+                <thead>
+                  <tr>
+                    <th>Atributo</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {conflict.consumoExistente.atributos.map((atributo) => (
+                    <tr key={atributo.nome}>
+                      <td>{atributo.nome}</td>
+                      <td>{formatAtributoValor(atributo)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </div>
+          )}
+
+          <p className="mb-0 text-muted">
+            Estoque atual: {conflict.consumoExistente.quantidadeEstoque}. Quantidade a adicionar:{" "}
+            {pendingPayload?.quantidade ?? 0}. Novo total:{" "}
+            {conflict.consumoExistente.quantidadeEstoque + (pendingPayload?.quantidade ?? 0)}.
+          </p>
+          {estoqueError && <div className="alert alert-danger mt-3 mb-0">{estoqueError}</div>}
+        </Dialog>
       )}
     </div>
   );

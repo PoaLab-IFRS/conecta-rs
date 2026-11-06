@@ -3,153 +3,170 @@ import { Link } from "react-router-dom";
 import { listCapitais } from "../../api/capital/listCapitais";
 import { getErrorMessage } from "../../api/parse";
 import { Pagination } from "../../components/Pagination";
+import { PageSearch } from "../../components/PageSearch";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import type { ListCapitalResponse } from "../../models/capital";
 
 const PAGE_SIZE = 10;
 const FILTER_DEBOUNCE_MS = 500;
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
-	style: "currency",
-	currency: "BRL",
+  style: "currency",
+  currency: "BRL",
 });
 
 export function CapitalList() {
-	const [nome, setNome] = useState("");
-	const [filtro, setFiltro] = useState("");
-	const [page, setPage] = useState(1);
-	const [result, setResult] = useState<ListCapitalResponse | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-	const debouncedNome = useDebouncedValue(nome.trim(), FILTER_DEBOUNCE_MS);
+  const [nome, setNome] = useState("");
+  const [filtro, setFiltro] = useState("");
+  const [page, setPage] = useState(1);
+  const [result, setResult] = useState<ListCapitalResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const debouncedNome = useDebouncedValue(nome.trim(), FILTER_DEBOUNCE_MS);
 
-	useEffect(() => {
-		setFiltro(debouncedNome);
-		setPage(1);
-	}, [debouncedNome]);
+  useEffect(() => {
+    setFiltro(debouncedNome);
+    setPage(1);
+  }, [debouncedNome]);
 
-	useEffect(() => {
-		let cancelled = false;
+  useEffect(() => {
+    let cancelled = false;
 
-		async function load() {
-			setLoading(true);
-			setError(null);
+    async function load() {
+      setLoading(true);
+      setError(null);
 
-			try {
-				const response = await listCapitais({
-					nome: filtro || undefined,
-					page,
-					pageSize: PAGE_SIZE,
-				});
+      try {
+        const response = await listCapitais({
+          nome: filtro || undefined,
+          page,
+          pageSize: PAGE_SIZE,
+        });
 
-				if (!cancelled) {
-					setResult(response);
-				}
-			} catch (err) {
-				if (!cancelled) {
-					setError(getErrorMessage(err, "Falha ao carregar itens de capital"));
-					setResult(null);
-				}
-			} finally {
-				if (!cancelled) {
-					setLoading(false);
-				}
-			}
-		}
+        if (!cancelled) {
+          setResult(response);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(getErrorMessage(err, "Falha ao carregar itens de capital"));
+          setResult(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
 
-		void load();
+    void load();
 
-		return () => {
-			cancelled = true;
-		};
-	}, [filtro, page]);
+    return () => {
+      cancelled = true;
+    };
+  }, [filtro, page]);
 
-	const totalPages = result
-		? Math.max(1, Math.ceil(result.total / result.pageSize))
-		: 1;
+  const totalPages = result ? Math.max(1, Math.ceil(result.total / result.pageSize)) : 1;
 
-	return (
-		<div className="container py-4">
-			<div className="d-flex justify-content-between align-items-center mb-4">
-				<h1 className="h3 mb-0">Itens de capital</h1>
-				<Link to="/capital/novo" className="btn btn-primary">
-					Novo item
-				</Link>
-			</div>
+  return (
+    <div>
+      <div className="page-header">
+        <h1 className="h3 mb-0">Itens de capital</h1>
+        <Link to="/capital/novo" className="btn btn-primary">
+          <i className="bi bi-plus-lg me-2" aria-hidden="true" />
+          Novo item
+        </Link>
+      </div>
 
-			<div className="mb-4">
-				<input
-					type="search"
-					className="form-control"
-					placeholder="Filtrar por nome ou descrição"
-					value={nome}
-					onChange={(event) => setNome(event.target.value)}
-				/>
-			</div>
+      <div className="surface">
+        <PageSearch>
+          <div className="search-field">
+            <i className="bi bi-search" aria-hidden="true" />
+            <input
+              type="search"
+              className="form-control"
+              placeholder="Pesquisar..."
+              aria-label="Filtrar itens de capital por nome ou descrição"
+              value={nome}
+              onChange={(event) => setNome(event.target.value)}
+            />
+          </div>
+        </PageSearch>
 
-			{error && <div className="alert alert-danger">{error}</div>}
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
 
-			{loading ? (
-				<p className="text-muted">Carregando...</p>
-			) : (
-				<>
-					<div className="table-responsive">
-						<table className="table table-striped table-hover align-middle">
-							<thead>
-								<tr>
-									<th scope="col">Nome</th>
-									<th scope="col">Número patrimonial</th>
-									<th scope="col">Nota fiscal</th>
-									<th scope="col">Valor</th>
-									<th scope="col">Nome da escola</th>
-									<th scope="col">Número de série</th>
-									<th scope="col">Descrição</th>
-									<th scope="col" className="text-end">
-										Ações
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{result?.data.length ? (
-									result.data.map((capital) => (
-										<tr key={capital.id}>
-											<td>{capital.nome}</td>
-											<td>{capital.assetNum}</td>
-											<td>{capital.notaFiscal}</td>
-											<td>{currencyFormatter.format(Number(capital.valor))}</td>
-											<td>{capital.nomeEscola}</td>
-											<td>{capital.numeroSerie}</td>
-											<td>{capital.descricao ?? "—"}</td>
-											<td className="text-end">
-												<Link
-													to={`/capital/${capital.id}/editar`}
-													className="btn btn-sm btn-outline-secondary"
-													title="Editar"
-													aria-label={`Editar ${capital.nome}`}
-												>
-													<i className="bi bi-pencil" aria-hidden="true" />
-												</Link>
-											</td>
-										</tr>
-									))
-								) : (
-									<tr>
-										<td colSpan={8} className="text-muted">
-											Nenhum item de capital encontrado.
-										</td>
-									</tr>
-								)}
-							</tbody>
-						</table>
-					</div>
+        {loading ? (
+          <p className="text-muted" role="status">
+            Carregando...
+          </p>
+        ) : (
+          <>
+            <div
+              className="table-responsive table-scroll"
+              role="region"
+              aria-label="Itens de capital"
+              tabIndex={0}
+            >
+              <table className="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Número patrimonial</th>
+                    <th scope="col">Nota fiscal</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col">Nome da escola</th>
+                    <th scope="col">Número de série</th>
+                    <th scope="col">Descrição</th>
+                    <th scope="col" className="text-end">
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result?.data.length ? (
+                    result.data.map((capital) => (
+                      <tr key={capital.id}>
+                        <td>{capital.nome}</td>
+                        <td>{capital.assetNum}</td>
+                        <td>{capital.notaFiscal}</td>
+                        <td>{currencyFormatter.format(Number(capital.valor))}</td>
+                        <td>{capital.nomeEscola}</td>
+                        <td>{capital.numeroSerie}</td>
+                        <td>{capital.descricao ?? "—"}</td>
+                        <td className="text-end">
+                          <Link
+                            to={`/capital/${capital.id}/editar`}
+                            className="btn btn-sm btn-outline-secondary"
+                            title="Editar"
+                            aria-label={`Editar ${capital.nome}`}
+                          >
+                            <i className="bi bi-pencil" aria-hidden="true" />
+                          </Link>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="text-muted">
+                        Nenhum item de capital encontrado.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
-					<Pagination
-						page={page}
-						totalPages={totalPages}
-						total={result?.total ?? 0}
-						onPageChange={setPage}
-					/>
-				</>
-			)}
-		</div>
-	);
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              total={result?.total ?? 0}
+              onPageChange={setPage}
+            />
+          </>
+        )}
+      </div>
+    </div>
+  );
 }

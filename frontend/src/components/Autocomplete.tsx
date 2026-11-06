@@ -6,6 +6,7 @@ export type AutocompleteOption = {
 };
 
 type AutocompleteProps = {
+  id?: string;
   value: string;
   options: AutocompleteOption[];
   placeholder?: string;
@@ -16,6 +17,7 @@ type AutocompleteProps = {
 };
 
 export function Autocomplete({
+  id,
   value,
   options,
   placeholder,
@@ -27,6 +29,7 @@ export function Autocomplete({
   const listId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   const normalizedValue = value.trim().toLowerCase();
 
@@ -39,10 +42,12 @@ export function Autocomplete({
 
   const exactMatch = options.some((option) => option.label.toLowerCase() === normalizedValue);
   const showCreate = allowCreate && normalizedValue.length > 0 && !exactMatch;
+  const optionCount = filtered.length + (showCreate ? 1 : 0);
+  const visible = open && optionCount > 0;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (!containerRef.current?.contains(event.target as Node)) {
+      if (event.target instanceof Node && !containerRef.current?.contains(event.target)) {
         setOpen(false);
       }
     }
@@ -50,6 +55,12 @@ export function Autocomplete({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (visible && activeIndex >= 0) {
+      document.getElementById(`${listId}-${activeIndex}`)?.scrollIntoView({ block: "nearest" });
+    }
+  }, [activeIndex, listId, visible]);
 
   function selectOption(option: AutocompleteOption) {
     onChange(option.label);
@@ -63,36 +74,78 @@ export function Autocomplete({
   }
 
   return (
-    <div className="position-relative" ref={containerRef}>
+    <div
+      className="position-relative"
+      ref={containerRef}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+      }}
+    >
       <input
+        id={id}
         type="text"
         className="form-control"
         role="combobox"
-        aria-expanded={open}
-        aria-controls={listId}
+        aria-expanded={visible}
+        aria-controls={visible ? listId : undefined}
+        aria-autocomplete="list"
+        aria-activedescendant={visible && activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined}
         autoComplete="off"
         placeholder={placeholder}
         disabled={disabled}
         value={value}
-        onFocus={() => setOpen(true)}
+        onFocus={() => {
+          setOpen(true);
+          setActiveIndex(-1);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            setOpen(false);
+            setActiveIndex(-1);
+          } else if ((event.key === "ArrowDown" || event.key === "ArrowUp") && optionCount > 0) {
+            event.preventDefault();
+            setOpen(true);
+            const delta = event.key === "ArrowDown" ? 1 : -1;
+            setActiveIndex((current) =>
+              current < 0
+                ? delta > 0
+                  ? 0
+                  : optionCount - 1
+                : (current + delta + optionCount) % optionCount,
+            );
+          } else if (event.key === "Enter" && visible && activeIndex >= 0) {
+            event.preventDefault();
+            const option = filtered[activeIndex];
+            if (option) selectOption(option);
+            else if (showCreate) createOption();
+            setActiveIndex(-1);
+          }
+        }}
         onChange={(event) => {
           onChange(event.target.value);
           onSelect(null);
           setOpen(true);
+          setActiveIndex(-1);
         }}
       />
 
-      {open && (filtered.length > 0 || showCreate) && (
+      {visible && (
         <div
           id={listId}
-          className="list-group position-absolute w-100 shadow-sm mt-1"
-          style={{ zIndex: 20, maxHeight: "220px", overflowY: "auto" }}
+          role="listbox"
+          aria-label="Sugestões"
+          className="list-group autocomplete-options"
         >
-          {filtered.map((option) => (
+          {filtered.map((option, index) => (
             <button
+              id={`${listId}-${index}`}
               key={option.id}
               type="button"
-              className="list-group-item list-group-item-action"
+              role="option"
+              aria-selected={index === activeIndex}
+              tabIndex={-1}
+              className={`list-group-item list-group-item-action${index === activeIndex ? " active" : ""}`}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => selectOption(option)}
             >
@@ -101,8 +154,12 @@ export function Autocomplete({
           ))}
           {showCreate && (
             <button
+              id={`${listId}-${filtered.length}`}
               type="button"
-              className="list-group-item list-group-item-action text-primary"
+              role="option"
+              aria-selected={activeIndex === filtered.length}
+              tabIndex={-1}
+              className={`list-group-item list-group-item-action text-primary${activeIndex === filtered.length ? " active" : ""}`}
               onMouseDown={(event) => event.preventDefault()}
               onClick={createOption}
             >

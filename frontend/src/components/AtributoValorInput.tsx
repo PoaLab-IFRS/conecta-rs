@@ -2,6 +2,7 @@ import { useAtributoValores } from "../api/atributo/useAtributoValores";
 import { Autocomplete } from "./Autocomplete";
 
 type AtributoValorInputProps = {
+  id?: string;
   atributoId?: number;
   tipoValor: string;
   value: string;
@@ -10,6 +11,7 @@ type AtributoValorInputProps = {
 };
 
 export function AtributoValorInput({
+  id,
   atributoId,
   tipoValor,
   value,
@@ -21,6 +23,7 @@ export function AtributoValorInput({
   if (tipoValor === "BOOLEANO") {
     return (
       <select
+        id={id}
         className="form-select"
         value={value}
         onChange={(event) => onChange(event.target.value)}
@@ -40,6 +43,7 @@ export function AtributoValorInput({
 
   return (
     <Autocomplete
+      id={id}
       value={value}
       options={options}
       placeholder={disabled ? "Selecione o tipo" : "Buscar ou informar valor"}
