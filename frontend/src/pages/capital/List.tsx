@@ -68,42 +68,60 @@ export function CapitalList() {
 		: 1;
 
 	return (
-		<div className="container py-4">
-			<div className="d-flex justify-content-between align-items-center mb-4">
-				<h1 className="h3 mb-0">Itens de capital</h1>
-				<Link to="/capital/novo" className="btn btn-primary">
-					Novo item
-				</Link>
-			</div>
+		<main className="management-page">
+			<div className="container management-container">
+				<header className="management-header">
+					<div>
+						<Link to="/menu" className="management-breadcrumb">
+							<i className="bi bi-arrow-left me-1" aria-hidden="true" />
+							Voltar ao menu
+						</Link>
+						<h1>Itens de capital</h1>
+						<p>Patrimônio e equipamentos cadastrados no laboratório.</p>
+					</div>
+					<Link to="/capital/novo" className="btn management-primary-button">
+						<i className="bi bi-plus-lg me-2" aria-hidden="true" />
+						Novo item
+					</Link>
+				</header>
 
-			<div className="mb-4">
-				<input
-					type="search"
-					className="form-control"
-					placeholder="Filtrar por nome ou descrição"
-					value={nome}
-					onChange={(event) => setNome(event.target.value)}
-				/>
-			</div>
+				<div className="management-toolbar">
+					<label htmlFor="capital-search" className="management-search">
+						<i className="bi bi-search" aria-hidden="true" />
+						<input
+							id="capital-search"
+							type="search"
+							className="form-control"
+							placeholder="Buscar por nome ou descrição"
+							value={nome}
+							onChange={(event) => setNome(event.target.value)}
+						/>
+					</label>
+					{result && (
+						<span className="management-result-count">
+							{result.total} {result.total === 1 ? "item" : "itens"}
+						</span>
+					)}
+				</div>
 
 			{error && <div className="alert alert-danger">{error}</div>}
 
 			{loading ? (
-				<p className="text-muted">Carregando...</p>
+				<div className="management-loading">
+					<span className="spinner-border spinner-border-sm" aria-hidden="true" />
+					<span>Carregando itens...</span>
+				</div>
 			) : (
 				<>
-					<div className="table-responsive">
-						<table className="table table-striped table-hover align-middle">
+					<div className="management-table-card table-responsive">
+						<table className="table management-table align-middle mb-0">
 							<thead>
 								<tr>
 									<th scope="col">Nome</th>
-									<th scope="col">Número patrimonial</th>
-									<th scope="col">Nota fiscal</th>
+									<th scope="col">Patrimônio</th>
 									<th scope="col">Valor</th>
-									<th scope="col">Nome da escola</th>
-									<th scope="col">Número de série</th>
+									<th scope="col">Escola</th>
 									<th scope="col">Descrição</th>
-									<th scope="col">Observações</th>
 									<th scope="col" className="text-end">
 										Ações
 									</th>
@@ -113,18 +131,25 @@ export function CapitalList() {
 								{result?.data.length ? (
 									result.data.map((capital) => (
 										<tr key={capital.id}>
-											<td>{capital.nome}</td>
+											<td>
+												<div className="management-item-name">
+													<span className="management-item-icon">
+														<i className="bi bi-currency-dollar" aria-hidden="true" />
+													</span>
+													<div>
+														<strong>{capital.nome}</strong>
+														<small>{capital.numeroSerie}</small>
+													</div>
+												</div>
+											</td>
 											<td>{capital.assetNum}</td>
-											<td>{capital.notaFiscal}</td>
 											<td>{currencyFormatter.format(Number(capital.valor))}</td>
 											<td>{capital.nomeEscola}</td>
-											<td>{capital.numeroSerie}</td>
 											<td>{capital.descricao ?? "—"}</td>
-											<td>{capital.observacao ?? "—"}</td>
 											<td className="text-end">
 												<Link
 													to={`/capital/${capital.id}/editar`}
-													className="btn btn-sm btn-outline-secondary"
+													className="btn management-edit-button"
 													title="Editar"
 													aria-label={`Editar ${capital.nome}`}
 												>
@@ -135,8 +160,12 @@ export function CapitalList() {
 									))
 								) : (
 									<tr>
-										<td colSpan={9} className="text-muted">
-											Nenhum item de capital encontrado.
+										<td colSpan={6}>
+											<div className="management-empty-state">
+												<i className="bi bi-currency-dollar" aria-hidden="true" />
+												<strong>Nenhum item encontrado</strong>
+												<span>Tente outro termo ou cadastre um novo item.</span>
+											</div>
 										</td>
 									</tr>
 								)}
@@ -152,6 +181,7 @@ export function CapitalList() {
 					/>
 				</>
 			)}
-		</div>
+			</div>
+		</main>
 	);
 }

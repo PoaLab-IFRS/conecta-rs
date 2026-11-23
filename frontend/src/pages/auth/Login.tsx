@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { authClient } from "../../lib/authClient";
+import poalabSymbol from "../../assets/poalab-symbol.svg";
 
 export function Login() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const locationState = location.state as { from?: string } | null;
   const requestedPath =
@@ -56,70 +58,112 @@ export function Login() {
   }
 
   return (
-    <div className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4">
-          <div className="card shadow-sm">
-            <div className="card-body p-4">
-              <div className="text-center mb-4">
-                <i
-                  className="bi bi-box-seam display-6 text-primary"
-                  aria-hidden="true"
+    <main className="login-page">
+      <div className="container-fluid login-container">
+        <div className="login-card row g-0">
+          <section className="login-brand col-lg-5 d-none d-lg-flex">
+            <div className="login-brand-content">
+              <img
+                src={poalabSymbol}
+                alt=""
+                width="96"
+                height="96"
+                aria-hidden="true"
+                className="login-brand-symbol"
+              />
+              <h2>Transformando ideias em protótipos reais</h2>
+              <p>
+                Gerencie consumos, patrimônio e usuários em um único ambiente.
+              </p>
+            </div>
+          </section>
+
+          <section className="login-form-panel col-12 col-lg-7">
+            <div className="login-form-wrapper">
+              <div className="text-center text-lg-start mb-4">
+                <img
+                  src={poalabSymbol}
+                  alt="POALab"
+                  width="72"
+                  height="72"
+                  className="d-lg-none login-mobile-symbol"
                 />
-                <h1 className="h3 mt-2 mb-1">Conecta RS</h1>
+                <span className="login-eyebrow">Área administrativa</span>
+                <h1 className="h2 login-title mt-2 mb-2">Bem-vindo ao POALab</h1>
                 <p className="text-muted mb-0">
-                  Entre com sua conta para continuar
+                  Entre com sua conta para continuar.
                 </p>
               </div>
 
               {error && (
-                <div className="alert alert-danger" role="alert">
+                <div id="login-error" className="alert alert-danger login-alert" role="alert">
                   {error}
                 </div>
               )}
 
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
+                  <label htmlFor="email" className="form-label fw-semibold">
                     E-mail
                   </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    className="form-control"
-                    placeholder="usuario@email.com"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    disabled={loading}
-                    autoComplete="email"
-                    autoFocus
-                    required
-                  />
+                  <div className="login-input-group">
+                    <i className="bi bi-envelope login-input-icon" aria-hidden="true" />
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      className={`form-control login-input ${error ? "is-invalid" : ""}`}
+                      placeholder="usuario@email.com"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      disabled={loading}
+                      autoComplete="email"
+                      aria-describedby={error ? "login-error" : undefined}
+                      autoFocus
+                      required
+                    />
+                  </div>
                 </div>
 
                 <div className="mb-4">
-                  <label htmlFor="password" className="form-label">
+                  <label htmlFor="password" className="form-label fw-semibold">
                     Senha
                   </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    className="form-control"
-                    placeholder="Digite sua senha"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    disabled={loading}
-                    autoComplete="current-password"
-                    minLength={8}
-                    required
-                  />
+                  <div className="login-input-group">
+                    <i className="bi bi-lock login-input-icon" aria-hidden="true" />
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      className={`form-control login-input login-password-input ${error ? "is-invalid" : ""}`}
+                      placeholder="Digite sua senha"
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      disabled={loading}
+                      autoComplete="current-password"
+                      aria-describedby={error ? "login-error" : undefined}
+                      minLength={8}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="login-password-toggle"
+                      onClick={() => setShowPassword((visible) => !visible)}
+                      disabled={loading}
+                      aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                      aria-pressed={showPassword}
+                    >
+                      <i
+                        className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}
+                        aria-hidden="true"
+                      />
+                    </button>
+                  </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="btn btn-primary w-100"
+                  className="btn btn-primary login-submit w-100"
                   disabled={loading}
                 >
                   {loading ? (
@@ -132,16 +176,25 @@ export function Login() {
                     </>
                   ) : (
                     <>
-                      <i className="bi bi-box-arrow-in-right me-2" />
-                      Entrar
+                      <i className="bi bi-box-arrow-in-right me-2" aria-hidden="true" />
+                      Acessar sistema
                     </>
                   )}
                 </button>
               </form>
+
+              <p className="login-security-note">
+                <i className="bi bi-shield-check" aria-hidden="true" />
+                Seu Login e Protegido.
+              </p>
             </div>
-          </div>
+
+            <footer className="login-footer">
+              © {new Date().getFullYear()} POALab
+            </footer>
+          </section>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

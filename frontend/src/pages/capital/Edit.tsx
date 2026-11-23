@@ -26,9 +26,14 @@ export function CapitalEdit() {
 
 	if (loadingCapital) {
 		return (
-			<div className="container py-4">
-				<p className="text-muted">Carregando...</p>
-			</div>
+			<main className="management-page">
+				<div className="container management-form-container">
+					<div className="management-loading">
+						<span className="spinner-border spinner-border-sm" aria-hidden="true" />
+						<span>Carregando item...</span>
+					</div>
+				</div>
+			</main>
 		);
 	}
 

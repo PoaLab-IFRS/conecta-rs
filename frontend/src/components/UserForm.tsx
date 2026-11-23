@@ -68,14 +68,18 @@ export function UserForm({
   }
 
   return (
-    <div className="container py-4" style={{ maxWidth: "720px" }}>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h3 mb-0">{title}</h1>
-
-        <Link to="/usuarios" className="btn btn-outline-secondary">
-          Voltar
-        </Link>
-      </div>
+    <main className="management-page">
+      <div className="container management-form-container">
+        <header className="management-header management-form-header">
+          <div>
+            <Link to="/usuarios" className="management-breadcrumb">
+              <i className="bi bi-arrow-left me-1" aria-hidden="true" />
+              Voltar aos usuários
+            </Link>
+            <h1>{title}</h1>
+            <p>Defina os dados de acesso e o nível de permissão.</p>
+          </div>
+        </header>
 
       {error && (
         <div className="alert alert-danger" role="alert">
@@ -83,8 +87,18 @@ export function UserForm({
         </div>
       )}
 
-      <form onSubmit={handleSubmit} noValidate>
-        <div className="mb-3">
+      <form onSubmit={handleSubmit} noValidate className="management-form-card">
+        <section className="management-form-section">
+          <div className="management-form-section-heading">
+            <span><i className="bi bi-person" aria-hidden="true" /></span>
+            <div>
+              <h2>Dados da conta</h2>
+              <p>Informações de identificação e acesso.</p>
+            </div>
+          </div>
+
+          <div className="row g-3">
+            <div className="col-12 col-md-6">
           <label className="form-label" htmlFor="name">
             Nome
           </label>
@@ -103,9 +117,9 @@ export function UserForm({
           {fieldErrors.name && (
             <div className="invalid-feedback">{fieldErrors.name}</div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-3">
+            <div className="col-12 col-md-6">
           <label className="form-label" htmlFor="email">
             E-mail
           </label>
@@ -124,9 +138,9 @@ export function UserForm({
           {fieldErrors.email && (
             <div className="invalid-feedback">{fieldErrors.email}</div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-3">
+            <div className="col-12 col-md-6">
           <label className="form-label" htmlFor="password">
             Senha
           </label>
@@ -151,9 +165,9 @@ export function UserForm({
           <div className="form-text">
             A senha deve ter entre 8 e 128 caracteres.
           </div>
-        </div>
+            </div>
 
-        <div className="mb-3">
+            <div className="col-12 col-md-6">
           <label className="form-label" htmlFor="confirmPassword">
             Confirmar senha
           </label>
@@ -173,9 +187,9 @@ export function UserForm({
               {fieldErrors.confirmPassword}
             </div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-4">
+            <div className="col-12">
           <label className="form-label" htmlFor="tipoUser">
             Tipo de usuário
           </label>
@@ -199,9 +213,13 @@ export function UserForm({
               {fieldErrors.tipoUser}
             </div>
           )}
-        </div>
+            </div>
+          </div>
+        </section>
 
-        <div className="d-flex justify-content-end gap-2">
+        <div className="management-form-actions">
+          <span />
+          <div className="d-flex gap-2">
           <Link to="/usuarios" className="btn btn-outline-secondary">
             Cancelar
           </Link>
@@ -213,8 +231,10 @@ export function UserForm({
           >
             {loading ? "Salvando..." : submitLabel}
           </button>
+          </div>
         </div>
       </form>
-    </div>
+      </div>
+    </main>
   );
 }

@@ -265,13 +265,18 @@ export function ConsumoForm({
   }
 
   return (
-    <div className="container py-4" style={{ maxWidth: "880px" }}>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h3 mb-0">{title}</h1>
-        <Link to="/consumo" className="btn btn-outline-secondary">
-          Voltar
-        </Link>
-      </div>
+    <main className="management-page">
+      <div className="container management-form-container">
+        <header className="management-header management-form-header">
+          <div>
+            <Link to="/consumo" className="management-breadcrumb">
+              <i className="bi bi-arrow-left me-1" aria-hidden="true" />
+              Voltar aos itens
+            </Link>
+            <h1>{title}</h1>
+            <p>Cadastre os dados e atributos do material de consumo.</p>
+          </div>
+        </header>
 
       <form
         onSubmit={(event) => {
@@ -279,8 +284,18 @@ export function ConsumoForm({
           void submitPayload(false);
         }}
         noValidate
+        className="management-form-card"
       >
-        <div className="mb-3">
+        <section className="management-form-section">
+          <div className="management-form-section-heading">
+            <span><i className="bi bi-box-seam" aria-hidden="true" /></span>
+            <div>
+              <h2>Identificação</h2>
+              <p>Dados principais e quantidade disponível.</p>
+            </div>
+          </div>
+
+          <div className="mb-3">
           <div className="form-check mb-2">
             <input
               id="gerar-nome"
@@ -343,18 +358,27 @@ export function ConsumoForm({
           {fieldErrors.quantidade && (
             <div className="invalid-feedback d-block">{fieldErrors.quantidade}</div>
           )}
-        </div>
+          </div>
+        </section>
 
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h2 className="h5 mb-0">Atributos</h2>
-          <button
-            type="button"
-            className="btn btn-outline-primary btn-sm"
-            onClick={() => setRows((current) => [...current, createEmptyRow()])}
-          >
-            Adicionar atributo
-          </button>
-        </div>
+        <section className="management-form-section">
+          <div className="management-form-section-heading">
+            <span><i className="bi bi-tags" aria-hidden="true" /></span>
+            <div>
+              <h2>Atributos</h2>
+              <p>Inclua características para identificar o material.</p>
+            </div>
+          </div>
+          <div className="d-flex justify-content-end mb-3">
+            <button
+              type="button"
+              className="btn btn-outline-primary btn-sm"
+              onClick={() => setRows((current) => [...current, createEmptyRow()])}
+            >
+              <i className="bi bi-plus-lg me-1" aria-hidden="true" />
+              Adicionar atributo
+            </button>
+          </div>
 
         {rows.length === 0 ? (
           <p className="text-muted">Nenhum atributo adicionado.</p>
@@ -481,16 +505,11 @@ export function ConsumoForm({
           <div className="alert alert-danger">{fieldErrors._form ?? error}</div>
         )}
 
-        <div className="d-flex flex-wrap gap-2 justify-content-between">
+        </section>
+
+        <div className="management-form-actions">
           <div className="d-flex gap-2">
-            <button type="submit" className="btn btn-primary" disabled={loading || savingEstoque}>
-              {loading ? "Salvando..." : submitLabel}
-            </button>
-            <Link to="/consumo" className="btn btn-outline-secondary">
-              Cancelar
-            </Link>
-          </div>
-          {onDeleteClick && (
+            {onDeleteClick && (
             <button
               type="button"
               className="btn btn-outline-danger"
@@ -500,7 +519,16 @@ export function ConsumoForm({
               <i className="bi bi-trash me-1" aria-hidden="true" />
               Remover material
             </button>
-          )}
+            )}
+          </div>
+          <div className="d-flex gap-2">
+            <Link to="/consumo" className="btn btn-outline-secondary">
+              Cancelar
+            </Link>
+            <button type="submit" className="btn btn-primary" disabled={loading || savingEstoque}>
+              {loading ? "Salvando..." : submitLabel}
+            </button>
+          </div>
         </div>
       </form>
 
@@ -607,6 +635,7 @@ export function ConsumoForm({
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </main>
   );
 }

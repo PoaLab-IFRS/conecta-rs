@@ -1,5 +1,7 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { authClient } from "../lib/authClient";
+import poalabSymbol from "../assets/poalab-symbol.svg";
+import { CurrentUser } from "./CurrentUser";
 
 export function AppLayout() {
   const navigate = useNavigate();
@@ -16,20 +18,33 @@ export function AppLayout() {
 
   return (
     <>
-      <nav className="navbar navbar-light bg-light border-bottom">
-        <div className="container">
-          <Link className="navbar-brand mb-0" to="/menu">
-            Conecta RS
+      <nav className="navbar app-navbar">
+        <div className="container app-navbar-container">
+          <Link className="navbar-brand app-navbar-brand mb-0" to="/menu">
+            <img
+              src={poalabSymbol}
+              alt=""
+              width="38"
+              height="38"
+              aria-hidden="true"
+            />
+            <span>
+              <strong>POALab</strong>
+              <small>Sistema de gestão</small>
+            </span>
           </Link>
 
-          <button
-            type="button"
-            className="btn btn-outline-danger btn-sm"
-            onClick={handleLogout}
-          >
-            <i className="bi bi-box-arrow-right me-2" />
-            Sair
-          </button>
+          <div className="app-navbar-actions">
+            <CurrentUser />
+            <button
+              type="button"
+              className="btn app-logout-button"
+              onClick={handleLogout}
+            >
+              <i className="bi bi-box-arrow-right me-2" aria-hidden="true" />
+              Sair
+            </button>
+          </div>
         </div>
       </nav>
 

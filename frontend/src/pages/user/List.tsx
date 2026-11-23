@@ -33,6 +33,16 @@ export function UserList() {
     useState<string | null>(null);
   const [passwordResetError, setPasswordResetError] =
     useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const normalizedSearch = search.trim().toLowerCase();
+  const filteredUsers = users?.filter((user) => {
+    const role = tipoUserLabels[user.tipoUser].toLowerCase();
+    return (
+      user.name.toLowerCase().includes(normalizedSearch) ||
+      user.email.toLowerCase().includes(normalizedSearch) ||
+      role.includes(normalizedSearch)
+    );
+  });
 
   async function sendPasswordReset(email: string) {
     setSendingPasswordReset(email);
@@ -78,14 +88,41 @@ export function UserList() {
 
   return (
     <>
-      <div className="container py-4">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1 className="h3 mb-0">Usuários</h1>
+      <main className="management-page">
+        <div className="container management-container">
+          <header className="management-header">
+            <div>
+              <Link to="/menu" className="management-breadcrumb">
+                <i className="bi bi-arrow-left me-1" aria-hidden="true" />
+                Voltar ao menu
+              </Link>
+              <h1>Usuários</h1>
+              <p>Gerencie contas, permissões e redefinições de acesso.</p>
+            </div>
+            <Link to="/usuarios/novo" className="btn management-primary-button">
+              <i className="bi bi-person-plus me-2" aria-hidden="true" />
+              Novo usuário
+            </Link>
+          </header>
 
-          <Link to="/usuarios/novo" className="btn btn-primary">
-            Novo usuário
-          </Link>
-        </div>
+          <div className="management-toolbar">
+            <label htmlFor="user-search" className="management-search">
+              <i className="bi bi-search" aria-hidden="true" />
+              <input
+                id="user-search"
+                type="search"
+                className="form-control"
+                placeholder="Buscar por nome, e-mail ou papel"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+            </label>
+            {users && (
+              <span className="management-result-count">
+                {filteredUsers?.length ?? 0} {(filteredUsers?.length ?? 0) === 1 ? "usuário" : "usuários"}
+              </span>
+            )}
+          </div>
 
         {(error || deleteError) && (
           <div className="alert alert-danger" role="alert">
@@ -106,10 +143,13 @@ export function UserList() {
         )}
 
         {loading ? (
-          <p className="text-muted">Carregando...</p>
+          <div className="management-loading">
+            <span className="spinner-border spinner-border-sm" aria-hidden="true" />
+            <span>Carregando usuários...</span>
+          </div>
         ) : (
-          <div className="table-responsive">
-            <table className="table table-striped table-hover align-middle">
+          <div className="management-table-card table-responsive">
+            <table className="table management-table align-middle mb-0">
               <thead>
                 <tr>
                   <th scope="col">Nome</th>
@@ -122,19 +162,29 @@ export function UserList() {
               </thead>
 
               <tbody>
-                {users?.length ? (
-                  users.map((user) => {
+                {filteredUsers?.length ? (
+                  filteredUsers.map((user) => {
                     const currentUser = user.id === session?.user.id;
                     const sendingReset =
                       sendingPasswordReset === user.email;
 
                     return (
                       <tr key={user.id}>
-                        <td>{user.name}</td>
+                        <td>
+                          <div className="management-item-name">
+                            <span className="management-item-icon management-user-icon">
+                              <i className="bi bi-person" aria-hidden="true" />
+                            </span>
+                            <div>
+                              <strong>{user.name}</strong>
+                              {currentUser && <small>Usuário atual</small>}
+                            </div>
+                          </div>
+                        </td>
                         <td>{user.email}</td>
                         <td>
                           <span
-                            className={`badge ${tipoUserClasses[user.tipoUser]}`}
+                            className={`badge management-role-badge ${tipoUserClasses[user.tipoUser]}`}
                           >
                             {tipoUserLabels[user.tipoUser]}
                           </span>
@@ -143,7 +193,7 @@ export function UserList() {
                         <td className="text-end text-nowrap">
                           <Link
                             to={`/usuarios/${user.id}/editar`}
-                            className="btn btn-sm btn-outline-primary me-2"
+                            className="btn management-action-button me-2"
                             title={`Editar ${user.name}`}
                             aria-label={`Editar ${user.name}`}
                           >
@@ -152,7 +202,7 @@ export function UserList() {
 
                           <button
                             type="button"
-                            className="btn btn-sm btn-outline-warning me-2"
+                            className="btn management-action-button management-action-warning me-2"
                             title={`Enviar redefinição de senha para ${user.email}`}
                             aria-label={`Enviar redefinição de senha para ${user.email}`}
                             disabled={sendingPasswordReset !== null}
@@ -175,7 +225,7 @@ export function UserList() {
 
                           <button
                             type="button"
-                            className="btn btn-sm btn-outline-danger"
+                            className="btn management-action-button management-action-danger"
                             title={
                               currentUser
                                 ? "Não é possível excluir o usuário atual"
@@ -193,8 +243,12 @@ export function UserList() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={4} className="text-muted">
-                      Nenhum usuário encontrado.
+                    <td colSpan={4}>
+                      <div className="management-empty-state">
+                        <i className="bi bi-person-x" aria-hidden="true" />
+                        <strong>Nenhum usuário encontrado</strong>
+                        <span>Tente outro termo ou cadastre um novo usuário.</span>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -202,7 +256,8 @@ export function UserList() {
             </table>
           </div>
         )}
-      </div>
+        </div>
+      </main>
 
       {userToDelete && (
         <div

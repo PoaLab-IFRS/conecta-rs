@@ -10,10 +10,10 @@ export function CurrentUser() {
   const isAdmin = session.user.role === "admin";
 
   return (
-    <div className="d-flex align-items-center gap-2 text-muted">
-      <i className="bi bi-person-circle" aria-hidden="true" />
-      <span>{session.user.name}</span>
-      <span className={`badge ${isAdmin ? "text-bg-primary" : "text-bg-secondary"}`}>
+    <div className="app-current-user">
+      <i className="bi bi-person-circle app-current-user-icon" aria-hidden="true" />
+      <span className="app-current-user-name">{session.user.name}</span>
+      <span className={`badge app-current-user-role ${isAdmin ? "app-current-user-admin" : ""}`}>
         {isAdmin ? "Administrador" : "Usuário"}
       </span>
     </div>

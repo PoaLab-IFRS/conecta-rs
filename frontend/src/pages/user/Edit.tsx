@@ -75,9 +75,14 @@ export function UserEdit() {
 
   if (loadingUser) {
     return (
-      <div className="container py-4">
-        <p className="text-muted">Carregando usuário...</p>
-      </div>
+      <main className="management-page">
+        <div className="container management-form-container">
+          <div className="management-loading">
+            <span className="spinner-border spinner-border-sm" aria-hidden="true" />
+            <span>Carregando usuário...</span>
+          </div>
+        </div>
+      </main>
     );
   }
 
@@ -92,14 +97,18 @@ export function UserEdit() {
   }
 
   return (
-    <div className="container py-4" style={{ maxWidth: "720px" }}>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h3 mb-0">Editar usuário</h1>
-
-        <Link to="/usuarios" className="btn btn-outline-secondary">
-          Voltar
-        </Link>
-      </div>
+    <main className="management-page">
+      <div className="container management-form-container">
+        <header className="management-header management-form-header">
+          <div>
+            <Link to="/usuarios" className="management-breadcrumb">
+              <i className="bi bi-arrow-left me-1" aria-hidden="true" />
+              Voltar aos usuários
+            </Link>
+            <h1>Editar usuário</h1>
+            <p>Atualize os dados de identificação e nível de acesso.</p>
+          </div>
+        </header>
 
       {error && (
         <div className="alert alert-danger" role="alert">
@@ -107,8 +116,18 @@ export function UserEdit() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} noValidate>
-        <div className="mb-3">
+      <form onSubmit={handleSubmit} noValidate className="management-form-card">
+        <section className="management-form-section">
+          <div className="management-form-section-heading">
+            <span><i className="bi bi-person" aria-hidden="true" /></span>
+            <div>
+              <h2>Dados da conta</h2>
+              <p>Informações de identificação e permissão.</p>
+            </div>
+          </div>
+
+          <div className="row g-3">
+            <div className="col-12 col-md-6">
           <label htmlFor="name" className="form-label">
             Nome
           </label>
@@ -125,9 +144,9 @@ export function UserEdit() {
           {fieldErrors.name && (
             <div className="invalid-feedback">{fieldErrors.name}</div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-3">
+            <div className="col-12 col-md-6">
           <label htmlFor="email" className="form-label">
             E-mail
           </label>
@@ -144,9 +163,9 @@ export function UserEdit() {
           {fieldErrors.email && (
             <div className="invalid-feedback">{fieldErrors.email}</div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-4">
+            <div className="col-12">
           <label htmlFor="tipoUser" className="form-label">
             Papel
           </label>
@@ -171,9 +190,13 @@ export function UserEdit() {
               {fieldErrors.tipoUser}
             </div>
           )}
-        </div>
+            </div>
+          </div>
+        </section>
 
-        <div className="d-flex justify-content-end gap-2">
+        <div className="management-form-actions">
+          <span />
+          <div className="d-flex gap-2">
           <Link to="/usuarios" className="btn btn-outline-secondary">
             Cancelar
           </Link>
@@ -181,8 +204,10 @@ export function UserEdit() {
           <button type="submit" className="btn btn-primary" disabled={loading}>
             {loading ? "Salvando..." : "Salvar alterações"}
           </button>
+          </div>
         </div>
       </form>
-    </div>
+      </div>
+    </main>
   );
 }

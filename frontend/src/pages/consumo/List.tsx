@@ -39,32 +39,53 @@ export function ConsumoList() {
   }
 
   return (
-    <div className="container py-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h3 mb-0">Consumos</h1>
-        <Link to="/consumo/novo" className="btn btn-primary">
-          Novo consumo
-        </Link>
-      </div>
+    <main className="management-page">
+      <div className="container management-container">
+        <header className="management-header">
+          <div>
+            <Link to="/menu" className="management-breadcrumb">
+              <i className="bi bi-arrow-left me-1" aria-hidden="true" />
+              Voltar ao menu
+            </Link>
+            <h1>Itens de consumo</h1>
+            <p>Materiais disponíveis e seus atributos cadastrados.</p>
+          </div>
+          <Link to="/consumo/novo" className="btn management-primary-button">
+            <i className="bi bi-plus-lg me-2" aria-hidden="true" />
+            Novo consumo
+          </Link>
+        </header>
 
-      <div className="mb-4">
-        <input
-          type="search"
-          className="form-control"
-          placeholder="Filtrar por nome, descrição ou atributo"
-          value={nome}
-          onChange={(event) => setNome(event.target.value)}
-        />
-      </div>
+        <div className="management-toolbar">
+          <label htmlFor="consumo-search" className="management-search">
+            <i className="bi bi-search" aria-hidden="true" />
+            <input
+              id="consumo-search"
+              type="search"
+              className="form-control"
+              placeholder="Buscar por nome, descrição ou atributo"
+              value={nome}
+              onChange={(event) => setNome(event.target.value)}
+            />
+          </label>
+          {result && (
+            <span className="management-result-count">
+              {result.total} {result.total === 1 ? "item" : "itens"}
+            </span>
+          )}
+        </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
       {loading ? (
-        <p className="text-muted">Carregando...</p>
+        <div className="management-loading">
+          <span className="spinner-border spinner-border-sm" aria-hidden="true" />
+          <span>Carregando itens...</span>
+        </div>
       ) : (
         <>
-          <div className="table-responsive">
-            <table className="table table-striped table-hover align-middle">
+          <div className="management-table-card table-responsive">
+            <table className="table management-table align-middle mb-0">
               <thead>
                 <tr>
                   <th scope="col" style={{ width: "2rem" }} />
@@ -88,13 +109,22 @@ export function ConsumoList() {
                           style={{ cursor: "pointer" }}
                         >
                           <td className="text-muted">{expanded ? "▾" : "▸"}</td>
-                          <td>{consumo.nome}</td>
+                          <td>
+                            <div className="management-item-name">
+                              <span className="management-item-icon">
+                                <i className="bi bi-box-seam" aria-hidden="true" />
+                              </span>
+                              <div>
+                                <strong>{consumo.nome}</strong>
+                              </div>
+                            </div>
+                          </td>
                           <td>{consumo.descricao ?? "—"}</td>
                           <td className="text-end">{consumo.quantidadeEstoque}</td>
                           <td className="text-end">
                             <Link
                               to={`/consumo/${consumo.id}/editar`}
-                              className="btn btn-sm btn-outline-secondary"
+                              className="btn management-edit-button"
                               title="Editar"
                               aria-label={`Editar ${consumo.nome}`}
                               onClick={(event) => event.stopPropagation()}
@@ -143,8 +173,12 @@ export function ConsumoList() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={5} className="text-muted">
-                      Nenhum material de consumo encontrado.
+                    <td colSpan={5}>
+                      <div className="management-empty-state">
+                        <i className="bi bi-box-seam" aria-hidden="true" />
+                        <strong>Nenhum item encontrado</strong>
+                        <span>Tente outro termo ou cadastre um novo consumo.</span>
+                      </div>
                     </td>
                   </tr>
                 )}
@@ -160,6 +194,7 @@ export function ConsumoList() {
           />
         </>
       )}
-    </div>
+      </div>
+    </main>
   );
 }

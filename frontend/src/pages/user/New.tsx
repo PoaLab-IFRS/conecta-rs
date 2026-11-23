@@ -14,7 +14,7 @@ export function UserNew() {
       error={error}
       onClearError={clearError}
       onSuccess={() => {
-        void navigate("/menu");
+        void navigate("/usuarios");
       }}
       onSubmit={async (input) => {
         const result = await create(input);

@@ -86,13 +86,18 @@ export function CapitalForm({
   }
 
   return (
-    <div className="container py-4" style={{ maxWidth: "720px" }}>
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h3 mb-0">{title}</h1>
-        <Link to="/capital" className="btn btn-outline-secondary">
-          Voltar
-        </Link>
-      </div>
+    <main className="management-page">
+      <div className="container management-form-container">
+        <header className="management-header management-form-header">
+          <div>
+            <Link to="/capital" className="management-breadcrumb">
+              <i className="bi bi-arrow-left me-1" aria-hidden="true" />
+              Voltar aos itens
+            </Link>
+            <h1>{title}</h1>
+            <p>Preencha os dados de identificação e registro do patrimônio.</p>
+          </div>
+        </header>
 
       {error && (
         <div className="alert alert-danger" role="alert">
@@ -100,8 +105,18 @@ export function CapitalForm({
         </div>
       )}
 
-      <form onSubmit={handleSubmit} noValidate>
-        <div className="mb-3">
+      <form onSubmit={handleSubmit} noValidate className="management-form-card">
+        <section className="management-form-section">
+          <div className="management-form-section-heading">
+            <span><i className="bi bi-info-circle" aria-hidden="true" /></span>
+            <div>
+              <h2>Identificação</h2>
+              <p>Dados principais usados para localizar o item.</p>
+            </div>
+          </div>
+
+          <div className="row g-3">
+            <div className="col-12 col-md-8">
           <label className="form-label" htmlFor="nome">
             Nome
           </label>
@@ -118,9 +133,9 @@ export function CapitalForm({
           {fieldErrors.nome && (
             <div className="invalid-feedback">{fieldErrors.nome}</div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-3">
+            <div className="col-12 col-md-4">
           <label className="form-label" htmlFor="assetNum">
             Número patrimonial
           </label>
@@ -137,9 +152,9 @@ export function CapitalForm({
           {fieldErrors.assetNum && (
             <div className="invalid-feedback">{fieldErrors.assetNum}</div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-3">
+            <div className="col-12 col-md-6">
           <label className="form-label" htmlFor="notaFiscal">
             Nota fiscal
           </label>
@@ -156,9 +171,9 @@ export function CapitalForm({
           {fieldErrors.notaFiscal && (
             <div className="invalid-feedback">{fieldErrors.notaFiscal}</div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-3">
+            <div className="col-12 col-md-6">
           <label className="form-label" htmlFor="valor">
             Valor
           </label>
@@ -176,9 +191,9 @@ export function CapitalForm({
           {fieldErrors.valor && (
             <div className="invalid-feedback">{fieldErrors.valor}</div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-3">
+            <div className="col-12 col-md-6">
           <label className="form-label" htmlFor="nomeEscola">
             Nome da escola
           </label>
@@ -197,9 +212,9 @@ export function CapitalForm({
               {fieldErrors.nomeEscola}
             </div>
           )}
-        </div>
+            </div>
 
-        <div className="mb-3">
+            <div className="col-12 col-md-6">
           <label className="form-label" htmlFor="numeroSerie">
             Número de série
           </label>
@@ -218,7 +233,18 @@ export function CapitalForm({
               {fieldErrors.numeroSerie}
             </div>
           )}
-        </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="management-form-section">
+          <div className="management-form-section-heading">
+            <span><i className="bi bi-text-paragraph" aria-hidden="true" /></span>
+            <div>
+              <h2>Detalhes adicionais</h2>
+              <p>Inclua informações úteis para consultas futuras.</p>
+            </div>
+          </div>
 
         <div className="mb-3">
           <label className="form-label" htmlFor="descricao">
@@ -263,8 +289,9 @@ export function CapitalForm({
             </div>
           )}
         </div>
+        </section>
 
-        <div className="d-flex justify-content-between">
+        <div className="management-form-actions">
           {onDeleteClick ? (
             <button
               type="button"
@@ -292,6 +319,7 @@ export function CapitalForm({
           </div>
         </div>
       </form>
-    </div>
+      </div>
+    </main>
   );
 }
