@@ -35,10 +35,21 @@
     "zod": "^4.6.2"
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
+    "@types/node": "^26.6.11",
     "@types/nodemailer": "^8.0.2",
     "prisma": "6",
     "tsx": "^4.23.13",
     "typescript": "^5.9.2"
+  },
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": [
+      "node"
+    ],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }
