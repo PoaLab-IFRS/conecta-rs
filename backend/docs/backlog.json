@@ -1,0 +1,422 @@
+{
+  "projeto": "Conecta RS",
+  "descricao": "Sistema web de gerenciamento de inventario e patrimonio para FabLabs",
+  "repositorio": "https://github.com/PoaLab-IFRS/conecta-rs",
+  "versao": "1.0",
+  "backlog": [
+    {
+      "epico": "EP01",
+      "nome": "Gestao de consumiveis",
+      "historias": [
+        {
+          "id": "US001",
+          "titulo": "Cadastrar consumivel",
+          "historia": "Como administrador, quero cadastrar materiais para manter o inventario atualizado.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Permitir informar o nome do material",
+            "Permitir adicionar uma descricao",
+            "Permitir associar atributos ao material",
+            "Permitir registrar a quantidade inicial em estoque",
+            "Salvar os dados no banco de dados"
+          ]
+        },
+        {
+          "id": "US002",
+          "titulo": "Listar consumiveis",
+          "historia": "Como usuario, quero visualizar os materiais cadastrados para consultar o inventario.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Exibir os materiais cadastrados",
+            "Apresentar nome e descricao",
+            "Permitir consultar os detalhes de um material"
+          ]
+        },
+        {
+          "id": "US003",
+          "titulo": "Editar consumivel",
+          "historia": "Como administrador, quero editar os dados de um material para manter suas informacoes atualizadas.",
+          "prioridade": "alta",
+          "status": "a_validar",
+          "criterios_aceite": [
+            "Permitir selecionar um material",
+            "Permitir alterar nome e descricao",
+            "Permitir atualizar atributos",
+            "Salvar as alteracoes"
+          ]
+        },
+        {
+          "id": "US004",
+          "titulo": "Excluir consumivel",
+          "historia": "Como administrador, quero excluir materiais para remover registros que nao sao mais necessarios.",
+          "prioridade": "media",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Permitir selecionar um material",
+            "Solicitar confirmacao antes da exclusao",
+            "Impedir exclusao quando houver relacionamentos que restrinjam a operacao",
+            "Atualizar a listagem apos a exclusao"
+          ]
+        }
+      ]
+    },
+    {
+      "epico": "EP02",
+      "nome": "Gerenciamento de atributos e variantes",
+      "historias": [
+        {
+          "id": "US005",
+          "titulo": "Cadastrar atributos",
+          "historia": "Como administrador, quero cadastrar atributos para descrever as caracteristicas dos materiais.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Permitir informar o nome do atributo",
+            "Permitir selecionar o tipo de valor",
+            "Aceitar os tipos texto, inteiro, decimal e booleano",
+            "Salvar o atributo no banco de dados"
+          ]
+        },
+        {
+          "id": "US006",
+          "titulo": "Associar atributos aos consumiveis",
+          "historia": "Como administrador, quero associar atributos aos materiais para definir suas caracteristicas.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Permitir associar atributos existentes",
+            "Impedir associacoes duplicadas",
+            "Manter o relacionamento entre material e atributo"
+          ]
+        },
+        {
+          "id": "US007",
+          "titulo": "Cadastrar variantes de materiais",
+          "historia": "Como administrador, quero cadastrar variantes para diferenciar materiais com caracteristicas distintas.",
+          "prioridade": "alta",
+          "status": "implementado_parcialmente",
+          "criterios_aceite": [
+            "Permitir criar variantes de um material",
+            "Permitir definir valores dos atributos",
+            "Diferenciar variantes pelas suas caracteristicas",
+            "Associar estoque individualmente a cada variante"
+          ]
+        },
+        {
+          "id": "US008",
+          "titulo": "Consultar detalhes das variantes",
+          "historia": "Como usuario, quero visualizar as caracteristicas das variantes para identificar corretamente os materiais.",
+          "prioridade": "media",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Exibir os atributos da variante",
+            "Exibir os valores correspondentes",
+            "Exibir a quantidade em estoque"
+          ]
+        }
+      ]
+    },
+    {
+      "epico": "EP03",
+      "nome": "Controle de estoque",
+      "historias": [
+        {
+          "id": "US009",
+          "titulo": "Registrar quantidade em estoque",
+          "historia": "Como administrador, quero registrar a quantidade de materiais para controlar o inventario.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Registrar quantidade para cada variante",
+            "Armazenar a quantidade no banco de dados",
+            "Associar o estoque a uma variante"
+          ]
+        },
+        {
+          "id": "US010",
+          "titulo": "Consultar estoque",
+          "historia": "Como usuario, quero consultar a quantidade disponivel de cada material.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Exibir quantidade disponivel",
+            "Identificar a variante correspondente",
+            "Permitir consultar os dados do estoque"
+          ]
+        },
+        {
+          "id": "US011",
+          "titulo": "Atualizar quantidade em estoque",
+          "historia": "Como administrador, quero atualizar as quantidades para manter o inventario correto.",
+          "prioridade": "alta",
+          "status": "a_validar",
+          "criterios_aceite": [
+            "Permitir alterar a quantidade",
+            "Validar valores informados",
+            "Salvar a nova quantidade",
+            "Atualizar as informacoes apresentadas"
+          ]
+        },
+        {
+          "id": "US012",
+          "titulo": "Controlar movimentacoes de estoque",
+          "historia": "Como administrador, quero registrar entradas e saidas para acompanhar as movimentacoes dos materiais.",
+          "prioridade": "media",
+          "status": "planejado",
+          "criterios_aceite": [
+            "Registrar entrada de materiais",
+            "Registrar saida de materiais",
+            "Atualizar o saldo automaticamente",
+            "Identificar data e quantidade movimentada"
+          ]
+        },
+        {
+          "id": "US013",
+          "titulo": "Consultar historico de movimentacoes",
+          "historia": "Como administrador, quero consultar o historico de movimentacoes para acompanhar as alteracoes no estoque.",
+          "prioridade": "media",
+          "status": "planejado",
+          "criterios_aceite": [
+            "Exibir entradas e saidas",
+            "Apresentar data da movimentacao",
+            "Apresentar quantidade movimentada",
+            "Permitir consultar movimentacoes anteriores"
+          ]
+        }
+      ]
+    },
+    {
+      "epico": "EP04",
+      "nome": "Gestao de patrimonio",
+      "historias": [
+        {
+          "id": "US014",
+          "titulo": "Cadastrar patrimonio",
+          "historia": "Como administrador, quero cadastrar bens permanentes para manter o controle patrimonial do laboratorio.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Informar nome do bem",
+            "Informar numero patrimonial",
+            "Informar numero de serie",
+            "Informar nota fiscal",
+            "Informar valor do bem",
+            "Informar nome da escola",
+            "Permitir adicionar descricao"
+          ]
+        },
+        {
+          "id": "US015",
+          "titulo": "Listar patrimonios",
+          "historia": "Como usuario, quero visualizar os bens cadastrados para consultar o patrimonio do laboratorio.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Exibir os patrimonios cadastrados",
+            "Apresentar as principais informacoes",
+            "Permitir consultar detalhes"
+          ]
+        },
+        {
+          "id": "US016",
+          "titulo": "Consultar patrimonio individual",
+          "historia": "Como usuario, quero consultar os detalhes de um bem para identificar suas informacoes.",
+          "prioridade": "media",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Localizar patrimonio pelo identificador",
+            "Exibir nome e descricao",
+            "Exibir numero patrimonial",
+            "Exibir numero de serie",
+            "Exibir valor e nota fiscal",
+            "Exibir escola vinculada"
+          ]
+        },
+        {
+          "id": "US017",
+          "titulo": "Editar patrimonio",
+          "historia": "Como administrador, quero editar os dados de um bem para manter o cadastro atualizado.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Permitir alterar os dados cadastrados",
+            "Validar numero patrimonial",
+            "Validar numero de serie",
+            "Salvar as alteracoes"
+          ]
+        },
+        {
+          "id": "US018",
+          "titulo": "Excluir patrimonio",
+          "historia": "Como administrador, quero excluir um patrimonio para remover registros incorretos ou desnecessarios.",
+          "prioridade": "media",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Permitir selecionar um patrimonio",
+            "Solicitar confirmacao",
+            "Excluir o registro",
+            "Atualizar a listagem"
+          ]
+        }
+      ]
+    },
+    {
+      "epico": "EP05",
+      "nome": "Interface e navegacao",
+      "historias": [
+        {
+          "id": "US019",
+          "titulo": "Acessar o sistema",
+          "historia": "Como usuario, quero acessar a aplicacao web para utilizar suas funcionalidades.",
+          "prioridade": "alta",
+          "status": "implementado_parcialmente",
+          "criterios_aceite": [
+            "Disponibilizar a aplicacao web",
+            "Permitir navegar pelas funcionalidades",
+            "Apresentar uma interface organizada"
+          ]
+        },
+        {
+          "id": "US020",
+          "titulo": "Navegar entre consumiveis e patrimonios",
+          "historia": "Como usuario, quero acessar as diferentes areas do sistema para gerenciar os registros.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Disponibilizar acesso a consumiveis",
+            "Disponibilizar acesso a patrimonios",
+            "Permitir navegar entre as paginas"
+          ]
+        },
+        {
+          "id": "US021",
+          "titulo": "Pesquisar materiais e patrimonios",
+          "historia": "Como usuario, quero pesquisar registros para localizar informacoes rapidamente.",
+          "prioridade": "media",
+          "status": "a_validar",
+          "criterios_aceite": [
+            "Permitir informar termos de pesquisa",
+            "Exibir resultados correspondentes",
+            "Informar quando nao houver resultados"
+          ]
+        }
+      ]
+    },
+    {
+      "epico": "EP06",
+      "nome": "Validacao e seguranca",
+      "historias": [
+        {
+          "id": "US022",
+          "titulo": "Validar dados dos cadastros",
+          "historia": "Como usuario, quero receber validacoes para evitar informacoes incorretas no sistema.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Validar campos obrigatorios",
+            "Validar tipos de dados",
+            "Apresentar mensagens de erro",
+            "Validar informacoes no frontend e backend"
+          ]
+        },
+        {
+          "id": "US023",
+          "titulo": "Impedir registros duplicados de patrimonio",
+          "historia": "Como administrador, quero impedir numeros patrimoniais e numeros de serie duplicados.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Verificar numero patrimonial existente",
+            "Verificar numero de serie existente",
+            "Impedir cadastro duplicado",
+            "Informar o motivo da rejeicao"
+          ]
+        },
+        {
+          "id": "US024",
+          "titulo": "Gerenciar acesso de usuarios",
+          "historia": "Como administrador, quero controlar o acesso dos usuarios para proteger as informacoes do inventario.",
+          "prioridade": "alta",
+          "status": "planejado",
+          "criterios_aceite": [
+            "Permitir autenticacao",
+            "Identificar usuarios",
+            "Definir permissoes de acesso",
+            "Restringir operacoes administrativas"
+          ]
+        }
+      ]
+    },
+    {
+      "epico": "EP07",
+      "nome": "Infraestrutura e manutencao",
+      "historias": [
+        {
+          "id": "US025",
+          "titulo": "Persistir dados no banco de dados",
+          "historia": "Como sistema, quero armazenar os registros em banco de dados para garantir a persistencia das informacoes.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Utilizar banco de dados MySQL",
+            "Persistir consumiveis",
+            "Persistir atributos e variantes",
+            "Persistir estoque",
+            "Persistir patrimonios"
+          ]
+        },
+        {
+          "id": "US026",
+          "titulo": "Disponibilizar API do sistema",
+          "historia": "Como frontend, quero consumir uma API para realizar operacoes de cadastro, consulta, edicao e exclusao.",
+          "prioridade": "alta",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Disponibilizar endpoints para consumiveis",
+            "Disponibilizar endpoints para atributos",
+            "Disponibilizar endpoints para patrimonios",
+            "Validar requisicoes",
+            "Retornar respostas adequadas"
+          ]
+        },
+        {
+          "id": "US027",
+          "titulo": "Executar sistema em ambiente Docker",
+          "historia": "Como desenvolvedor, quero executar o sistema em containers para facilitar a configuracao do ambiente.",
+          "prioridade": "media",
+          "status": "implementado_documentado",
+          "criterios_aceite": [
+            "Disponibilizar configuracao Docker Compose",
+            "Executar banco de dados",
+            "Executar backend",
+            "Executar frontend",
+            "Permitir inicializacao integrada"
+          ]
+        },
+        {
+          "id": "US028",
+          "titulo": "Realizar testes do sistema",
+          "historia": "Como desenvolvedor, quero testar as funcionalidades para garantir o funcionamento correto da aplicacao.",
+          "prioridade": "alta",
+          "status": "a_validar",
+          "criterios_aceite": [
+            "Testar cadastros",
+            "Testar consultas",
+            "Testar edicoes",
+            "Testar exclusoes",
+            "Testar validacoes",
+            "Verificar integracao entre frontend e backend"
+          ]
+        }
+      ]
+    }
+  ],
+  "legenda_status": {
+    "implementado_documentado": "Funcionalidade identificada na documentacao ou historico do projeto.",
+    "implementado_parcialmente": "Existe suporte identificado, mas o fluxo completo precisa ser conferido.",
+    "a_validar": "Funcionalidade ou comportamento que precisa ser conferido no codigo e na interface.",
+    "planejado": "Funcionalidade proposta para complementar o sistema."
+  }
+}
